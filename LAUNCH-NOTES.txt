@@ -1,0 +1,61 @@
+SUMMIT DRIVER ACADEMY — LAUNCH VERSION 1.0
+
+PUBLIC CONTACT
+Phone: 613-804-7321
+Email: info@summitdriveracademy.com
+Website: www.summitdriveracademy.com
+Slogan: Locally Owned. Professionally Driven.
+
+INCLUDED
+- English and French website
+- Founding 50 no-payment pre-registration
+- MTO approval-pending language
+- Introductory tuition: $1,049 + applicable taxes
+- Regular tuition: $1,200 + applicable taxes
+- Click-to-call links
+- Public email links
+- Jason St. Louis profile and review placeholders
+- Netlify-compatible pre-registration forms
+- English and French confirmation pages
+
+BEFORE PUBLIC DEPLOYMENT
+1. Create and activate info@summitdriveracademy.com with your email provider.
+2. Deploy through Netlify so the pre-registration forms collect submissions.
+3. Test the English and French forms.
+4. Add privacy, terms, cancellation/refund and accessibility pages.
+5. Add the Google review link after the Google Business Profile is verified.
+6. Do not represent Summit as MTO-approved until official approval is received.
+
+
+VERSION 2 VISUAL CHANGES
+- Fixed contact strip is visible at the top of every page.
+- “Locally Owned. Professionally Driven.” appears prominently in the hero.
+- Large clickable phone panel appears directly in the hero.
+- Phone and email are substantially larger in the footer.
+- Mobile contact bar and click-to-call behavior retained.
+
+
+VERSION 2.1 CHANGES
+- Preferred start month begins with October 2026.
+- Added visible launch badge: First Classes Begin October 2026.
+- Moved “Locally Owned. Professionally Driven.” lower beneath the hero logo.
+- Upgraded the phone number typography for a cleaner luxury appearance.
+- Refined hero spacing and mobile behavior.
+
+Month fields updated:
+- English form: 0
+- French form: 0
+
+
+VERSION 2.2 CHANGES
+- Top phone number and email now both appear in Summit gold.
+- Added English and French Founding 50 availability counters.
+- Counter begins at 0 reserved and 50 remaining.
+- Preferred start month is set to October 2026 and cannot be earlier.
+- To update the counter, change data-reserved="0" in index.html and fr/index.html.
+
+
+FINAL VERSION
+- Removed Preferred Start Month from English and French pre-registration forms.
+- Kept the Founding 50 counter, no-payment wording, October 2026 launch message,
+  bilingual pages, phone, email, and all premium styling.

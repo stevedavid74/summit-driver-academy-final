@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /portal/
+Disallow: /fr/portal/
+Disallow: /thank-you.html
+Disallow: /fr/merci.html
+
+Sitemap: https://summitdriveracademy.com/sitemap.xml

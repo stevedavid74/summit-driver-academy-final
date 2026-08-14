@@ -82,7 +82,7 @@ updatePremiumExperience();
 
 // Secure registration endpoint. The server—not the browser—assigns Founding 30
 // or regular tuition and sends the matching bilingual confirmation.
-const summitRegistrationConfig=window.SUMMIT_REGISTRATION||{};
+const summitRegistrationConfig=window.SUMMIT_REGISTRATION||{endpoint:'https://zrnylkqtofjitxtykhxq.supabase.co/functions/v1/register'};
 const summitRegistrationReady=Boolean(summitRegistrationConfig.endpoint);
 
 function setFormStatus(form,message,type='info'){

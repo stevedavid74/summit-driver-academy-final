@@ -35,6 +35,15 @@ if(reducedMotion){
 const year=document.getElementById('year');
 if(year) year.textContent=new Date().getFullYear();
 
+// Keep the privacy notice beside consent on both language versions.
+document.querySelectorAll('.consent-row span').forEach(text=>{
+  const isFrench=document.documentElement.lang==='fr';
+  const link=document.createElement('a');
+  link.href=isFrench?'confidentialite.html':'privacy.html';
+  link.textContent=isFrench?'Lire la politique de confidentialité.':'Read our privacy policy.';
+  text.append(document.createTextNode(' '),link);
+});
+
 
 // Premium brand interactions: condensed navigation, subtle hero depth,
 // and branded journey progress. All effects respect reduced-motion settings.
@@ -181,33 +190,4 @@ document.querySelectorAll('.prereg-form').forEach(form=>{
     }
     submitPreregistration(form);
   });
-});
-
-
-/* Founding 30 availability counter.
-   Change data-reserved="0" in both HTML files as real pre-registrations arrive. */
-document.querySelectorAll(".founding-counter").forEach((counter) => {
-  const total = Number(counter.dataset.total || 30);
-  const reserved = Math.min(total, Math.max(0, Number(counter.dataset.reserved || 0)));
-  const remaining = total - reserved;
-  const percent = Math.round((reserved / total) * 100);
-
-  counter.querySelectorAll(".founding-remaining").forEach((el) => {
-    el.textContent = String(remaining);
-  });
-  counter.querySelectorAll(".founding-reserved").forEach((el) => {
-    el.textContent = String(reserved);
-  });
-  counter.querySelectorAll(".founding-percent").forEach((el) => {
-    el.textContent = String(percent);
-  });
-
-  const fill = counter.querySelector(".founding-progress-fill");
-  const track = counter.querySelector(".founding-progress-track");
-  if (track) track.setAttribute("aria-valuenow", String(reserved));
-  if (fill) {
-    requestAnimationFrame(() => {
-      fill.style.width = `${percent}%`;
-    });
-  }
 });

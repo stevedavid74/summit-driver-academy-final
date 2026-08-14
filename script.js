@@ -71,27 +71,123 @@ window.addEventListener('resize',updatePremiumExperience,{passive:true});
 updatePremiumExperience();
 
 
-// Netlify handles Founding 50 form submissions after deployment.
-// During local Live Server preview, prevent a misleading submission and show a clear notice.
+// Secure registration endpoint. The server—not the browser—assigns Founding 30
+// or regular tuition and sends the matching bilingual confirmation.
+const summitRegistrationConfig=window.SUMMIT_REGISTRATION||{};
+const summitRegistrationReady=Boolean(summitRegistrationConfig.endpoint);
+
+function setFormStatus(form,message,type='info'){
+  let status=form.querySelector('.form-status');
+  if(!status){
+    status=document.createElement('p');
+    status.className='form-status';
+    status.setAttribute('role','status');
+    status.setAttribute('aria-live','polite');
+    form.appendChild(status);
+  }
+  status.dataset.type=type;
+  status.textContent=message;
+}
+
+async function submitPreregistration(form){
+  const lang=document.documentElement.lang==='fr'?'fr':'en';
+  const button=form.querySelector('button[type="submit"]');
+  const originalText=button?button.textContent:'';
+  const formData=new FormData(form);
+
+  // Honeypot: silently accept bot submissions without saving data.
+  if(String(formData.get('bot-field')||'').trim()) return;
+
+  const payload={
+    name:String(formData.get('name')||'').trim(),
+    email:String(formData.get('email')||'').trim(),
+    phone:String(formData.get('phone')||'').trim(),
+    preferredWeekStart:String(formData.get('preferred-week')||'').trim(),
+    language:lang,
+    consent:formData.get('consent')==='on'
+  };
+
+  if(!payload.name||!payload.email||!payload.phone||!payload.preferredWeekStart||!payload.consent){
+    setFormStatus(
+      form,
+      lang==='fr'?'Veuillez remplir tous les champs et confirmer votre consentement.':'Please complete every field and confirm your consent.',
+      'error'
+    );
+    return;
+  }
+
+  if(button){
+    button.disabled=true;
+    button.textContent=lang==='fr'?'Envoi en cours…':'Submitting…';
+  }
+  setFormStatus(form,lang==='fr'?'Enregistrement de votre préinscription…':'Saving your pre-registration…');
+
+  try{
+    const response=await fetch(summitRegistrationConfig.endpoint,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+
+    if(!response.ok){
+      const details=await response.text();
+      throw new Error(`Registration ${response.status}: ${details}`);
+    }
+
+    const registration=await response.json();
+    if(!registration.reference||!['founding','regular'].includes(registration.tier)||![900,1200].includes(Number(registration.price))){
+      throw new Error('Registration service returned an invalid response');
+    }
+
+    setFormStatus(form,lang==='fr'?'Préinscription enregistrée. Redirection…':'Pre-registration saved. Redirecting…','success');
+    const destination=lang==='fr'?'merci.html':'thank-you.html';
+    const query=new URLSearchParams({
+      tier:registration.tier,
+      price:String(registration.price),
+      reference:registration.reference
+    });
+    window.location.href=`${destination}?${query}`;
+  }catch(error){
+    console.error('Pre-registration submission failed:',error);
+    setFormStatus(
+      form,
+      lang==='fr'?'Impossible d’envoyer la préinscription pour le moment. Veuillez réessayer ou nous appeler.':'We could not submit your pre-registration. Please try again or call us.',
+      'error'
+    );
+    if(button){
+      button.disabled=false;
+      button.textContent=originalText;
+    }
+  }
+}
+
+document.querySelectorAll('input[name="preferred-week"]').forEach(input=>{
+  input.min='2026-10-05';
+  input.step='7';
+});
+
 document.querySelectorAll('.prereg-form').forEach(form=>{
   form.addEventListener('submit',event=>{
-    if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){
-      event.preventDefault();
-      const button=form.querySelector('button[type="submit"]');
-      if(button){
-        const original=button.textContent;
-        button.textContent=document.documentElement.lang==='fr'?'Aucune donnée envoyée en aperçu local':'Local preview — no data sent';
-        setTimeout(()=>button.textContent=original,3200);
-      }
+    event.preventDefault();
+    if(!summitRegistrationReady){
+      setFormStatus(
+        form,
+        document.documentElement.lang==='fr'
+          ?'Le service d’inscription est temporairement indisponible. Veuillez nous appeler.'
+          :'The registration service is temporarily unavailable. Please call us.',
+        'error'
+      );
+      return;
     }
+    submitPreregistration(form);
   });
 });
 
 
-/* Founding 50 availability counter.
+/* Founding 30 availability counter.
    Change data-reserved="0" in both HTML files as real pre-registrations arrive. */
 document.querySelectorAll(".founding-counter").forEach((counter) => {
-  const total = Number(counter.dataset.total || 50);
+  const total = Number(counter.dataset.total || 30);
   const reserved = Math.min(total, Math.max(0, Number(counter.dataset.reserved || 0)));
   const remaining = total - reserved;
   const percent = Math.round((reserved / total) * 100);

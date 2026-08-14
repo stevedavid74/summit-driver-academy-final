@@ -1,0 +1,73 @@
+(() => {
+  'use strict';
+  const t = {
+    en:{portalName:'Instructor Portal',signOut:'Sign out',privateAccess:'Private staff access',welcome:'Welcome to the Summit instructor portal.',loginIntro:'Sign in to view assigned students, record lessons, and update progress.',email:'Email',password:'Password',signIn:'Sign in securely',dashboard:'Dashboard',assignedStudents:'Assigned students',upcomingLessons:'Upcoming lessons',activeStudents:'Active students',studentRoster:'Student roster',yourStudents:'Your students',addStudent:'Add student',noStudents:'No students are assigned yet.',selectStudent:'Select a student to review progress and record a lesson.',studentProgress:'Student progress',onlineTraining:'Online training',inCarTraining:'In-car training',summitScore:'Summit score',currentFocus:'Current focus',nextLesson:'Next lesson',recordLesson:'Record a lesson',fullName:'Full name',phone:'Phone',language:'Language',assignInstructor:'Assign instructor',saveStudent:'Save student',lessonReport:'Lesson report',lessonDate:'Lesson date',duration:'Duration (minutes)',overallScore:'Overall score',observation:'Observation',intersections:'Intersections',laneControl:'Lane control',parking:'Parking',defensiveDriving:'Defensive driving',lessonNotes:'Lesson notes',nextFocus:'Next focus',saveReport:'Save lesson report',owner:'Owner',instructor:'Instructor',active:'Active',completed:'Completed',pre_registered:'Pre-registered',inactive:'Inactive',hours:'hours',saved:'Saved successfully.',authFailed:'The email or password is incorrect.',notAuthorized:'This account does not have active Summit staff access.',loadFailed:'The portal could not load. Please try again.'},
+    fr:{portalName:'Portail des moniteurs',signOut:'Déconnexion',privateAccess:'Accès privé du personnel',welcome:'Bienvenue au portail des moniteurs Summit.',loginIntro:'Connectez-vous pour voir les élèves assignés, consigner les leçons et mettre à jour leur progrès.',email:'Courriel',password:'Mot de passe',signIn:'Connexion sécurisée',dashboard:'Tableau de bord',assignedStudents:'Élèves assignés',upcomingLessons:'Leçons à venir',activeStudents:'Élèves actifs',studentRoster:'Liste des élèves',yourStudents:'Vos élèves',addStudent:'Ajouter un élève',noStudents:'Aucun élève ne vous est assigné.',selectStudent:'Sélectionnez un élève pour consulter son progrès et consigner une leçon.',studentProgress:'Progrès de l’élève',onlineTraining:'Formation en ligne',inCarTraining:'Formation en voiture',summitScore:'Résultat Summit',currentFocus:'Objectif actuel',nextLesson:'Prochaine leçon',recordLesson:'Consigner une leçon',fullName:'Nom complet',phone:'Téléphone',language:'Langue',assignInstructor:'Assigner un moniteur',saveStudent:'Enregistrer l’élève',lessonReport:'Rapport de leçon',lessonDate:'Date de la leçon',duration:'Durée (minutes)',overallScore:'Note globale',observation:'Observation',intersections:'Intersections',laneControl:'Maîtrise de la voie',parking:'Stationnement',defensiveDriving:'Conduite préventive',lessonNotes:'Notes de leçon',nextFocus:'Prochain objectif',saveReport:'Enregistrer le rapport',owner:'Propriétaire',instructor:'Moniteur',active:'Actif',completed:'Terminé',pre_registered:'Préinscrit',inactive:'Inactif',hours:'heures',saved:'Enregistré avec succès.',authFailed:'Le courriel ou le mot de passe est incorrect.',notAuthorized:'Ce compte ne dispose pas d’un accès actif au personnel Summit.',loadFailed:'Le portail n’a pas pu être chargé. Veuillez réessayer.'}
+  };
+  Object.assign(t.en,{secureSetup:'Secure account setup',createPassword:'Create your secure password.',setupIntro:'Choose a unique password for the Summit portal. Do not reuse your Gmail password.',newPassword:'New password',confirmPassword:'Confirm new password',savePassword:'Save password and enter portal',passwordGuidance:'Use at least 12 characters, including a mix of words, numbers, or symbols.',passwordMismatch:'The passwords do not match.',passwordTooShort:'Your password must contain at least 12 characters.',passwordSaved:'Your password has been saved securely.',setupFailed:'Your password could not be saved. Please request a new invitation.'});
+  Object.assign(t.fr,{secureSetup:'Configuration sécurisée du compte',createPassword:'Créez votre mot de passe sécurisé.',setupIntro:'Choisissez un mot de passe unique pour le portail Summit. Ne réutilisez pas votre mot de passe Gmail.',newPassword:'Nouveau mot de passe',confirmPassword:'Confirmer le nouveau mot de passe',savePassword:'Enregistrer le mot de passe et accéder au portail',passwordGuidance:'Utilisez au moins 12 caractères, avec un mélange de mots, de chiffres ou de symboles.',passwordMismatch:'Les mots de passe ne correspondent pas.',passwordTooShort:'Votre mot de passe doit contenir au moins 12 caractères.',passwordSaved:'Votre mot de passe a été enregistré de façon sécurisée.',setupFailed:'Votre mot de passe n’a pas pu être enregistré. Veuillez demander une nouvelle invitation.'});
+  const $ = s => document.querySelector(s);
+  const config = window.SUMMIT_PORTAL_CONFIG;
+  const client = window.supabase.createClient(config.supabaseUrl, config.supabasePublishableKey);
+  let lang = localStorage.getItem('summitPortalLanguage') || (location.pathname.includes('/fr/') ? 'fr' : 'en');
+  let profile = null, students = [], selected = null;
+
+  function translate(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t[lang][el.dataset.i18n]});$('#languageToggle').textContent=lang==='en'?'FR':'EN';localStorage.setItem('summitPortalLanguage',lang);renderStudents();if(selected)renderDetail(selected)}
+  function message(el,text,error=false){el.textContent=text;el.classList.toggle('error',error)}
+  function openModal(id){$('#'+id).classList.remove('hidden');$('#modalBackdrop').classList.remove('hidden')}
+  function closeModals(){document.querySelectorAll('.modal-card').forEach(x=>x.classList.add('hidden'));$('#modalBackdrop').classList.add('hidden')}
+  function dateText(value){if(!value)return '—';return new Intl.DateTimeFormat(lang==='fr'?'fr-CA':'en-CA',{dateStyle:'medium',timeStyle:'short'}).format(new Date(value))}
+  function statusText(value){return t[lang][value]||value}
+  function isPasswordSetupLink(){const params=`${location.search}&${location.hash.replace(/^#/,'')}`;return /(?:^|[?&#])(type=(?:invite|recovery)|access_token=|code=)/.test(params)}
+  function showPasswordSetup(){
+    $('#loginView').classList.add('hidden');
+    $('#portalView').classList.add('hidden');
+    $('#passwordSetupView').classList.remove('hidden');
+    $('#signOutButton').classList.add('hidden');
+  }
+
+  async function loadPortal(user){
+    const {data:p,error:pe}=await client.from('staff_profiles').select('user_id,full_name,role,preferred_language,is_active').eq('user_id',user.id).maybeSingle();
+    if(pe||!p||!p.is_active){await client.auth.signOut();message($('#loginMessage'),t[lang].notAuthorized,true);return}
+    profile=p;lang=p.preferred_language||lang;translate();
+    const {data:s,error:se}=await client.from('students').select('*').order('full_name');
+    if(se){message($('#portalMessage'),t[lang].loadFailed,true);return}
+    students=s||[];$('#loginView').classList.add('hidden');$('#portalView').classList.remove('hidden');$('#signOutButton').classList.remove('hidden');
+    $('#staffGreeting').textContent=p.full_name;$('#staffRole').textContent=t[lang][p.role];$('#newStudentButton').classList.toggle('hidden',p.role!=='owner');
+    updateStats();renderStudents();if(students[0])selectStudent(students[0].id);
+    if(p.role==='owner') await loadInstructors();
+  }
+  async function loadInstructors(){const {data}=await client.from('staff_profiles').select('user_id,full_name,role').eq('is_active',true).order('full_name');$('#instructorSelect').innerHTML=(data||[]).map(x=>`<option value="${x.user_id}">${escapeHtml(x.full_name)} — ${t[lang][x.role]}</option>`).join('')}
+  function updateStats(){const now=Date.now();$('#studentCount').textContent=students.length;$('#activeCount').textContent=students.filter(x=>x.status==='active').length;$('#upcomingCount').textContent=students.filter(x=>x.next_lesson_at&&new Date(x.next_lesson_at).getTime()>now).length}
+  function escapeHtml(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  function renderStudents(){if(!$('#studentList'))return;$('#studentList').innerHTML=students.map(s=>`<button class="student-button ${selected&&selected.id===s.id?'active':''}" data-student="${s.id}" type="button"><span>${escapeHtml(s.full_name)}<small>${escapeHtml(s.current_focus||statusText(s.status))}</small></span><b>${s.in_car_hours}/10</b></button>`).join('');$('#emptyStudents').classList.toggle('hidden',students.length>0)}
+  function selectStudent(id){selected=students.find(s=>s.id===id);if(!selected)return;renderStudents();renderDetail(selected)}
+  function renderDetail(s){$('#studentEmptyState').classList.add('hidden');$('#studentDetail').classList.remove('hidden');$('#detailName').textContent=s.full_name;$('#detailStatus').textContent=statusText(s.status);$('#onlineProgress').value=s.online_hours;$('#onlineValue').textContent=`${s.online_hours}/30 ${t[lang].hours}`;$('#carProgress').value=s.in_car_hours;$('#carValue').textContent=`${s.in_car_hours}/10 ${t[lang].hours}`;$('#scoreProgress').value=s.summit_score||0;$('#scoreValue').textContent=s.summit_score==null?'—':`${s.summit_score}%`;$('#detailFocus').textContent=s.current_focus||'—';$('#detailNextLesson').textContent=dateText(s.next_lesson_at)}
+
+  $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();message($('#loginMessage'),'');const button=e.submitter;button.disabled=true;const {data,error}=await client.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});button.disabled=false;if(error)return message($('#loginMessage'),t[lang].authFailed,true);await loadPortal(data.user)});
+  $('#passwordSetupForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const button=e.submitter,newPassword=$('#newPassword').value,confirmation=$('#confirmPassword').value;
+    message($('#passwordSetupMessage'),'');
+    if(newPassword.length<12)return message($('#passwordSetupMessage'),t[lang].passwordTooShort,true);
+    if(newPassword!==confirmation)return message($('#passwordSetupMessage'),t[lang].passwordMismatch,true);
+    button.disabled=true;
+    const {data,error}=await client.auth.updateUser({password:newPassword});
+    button.disabled=false;
+    if(error)return message($('#passwordSetupMessage'),t[lang].setupFailed,true);
+    message($('#passwordSetupMessage'),t[lang].passwordSaved);
+    history.replaceState(null,'',location.pathname);
+    $('#newPassword').value='';$('#confirmPassword').value='';
+    await loadPortal(data.user);
+  });
+  $('#signOutButton').addEventListener('click',async()=>{await client.auth.signOut();location.reload()});
+  $('#languageToggle').addEventListener('click',()=>{lang=lang==='en'?'fr':'en';translate()});
+  $('#studentList').addEventListener('click',e=>{const b=e.target.closest('[data-student]');if(b)selectStudent(b.dataset.student)});
+  $('#newStudentButton').addEventListener('click',()=>openModal('studentForm'));
+  $('#showReportButton').addEventListener('click',()=>{$('#reportStudentName').textContent=selected.full_name;$('#reportForm [name=lesson_date]').value=new Date().toISOString().slice(0,10);openModal('reportForm')});
+  $('#modalBackdrop').addEventListener('click',closeModals);document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeModals));
+  $('#studentForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget),payload=Object.fromEntries(f.entries());const {data,error}=await client.from('students').insert(payload).select().single();if(error)return message(e.currentTarget.querySelector('.message'),error.message,true);students.push(data);students.sort((a,b)=>a.full_name.localeCompare(b.full_name));updateStats();selectStudent(data.id);message($('#portalMessage'),t[lang].saved);e.currentTarget.reset();closeModals()});
+  $('#reportForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget),payload=Object.fromEntries(f.entries());['duration_minutes','overall_score','observation_score','intersections_score','lane_control_score','parking_score','defensive_driving_score'].forEach(k=>{payload[k]=payload[k]===''?null:Number(payload[k])});payload.student_id=selected.id;payload.instructor_id=profile.user_id;const {error}=await client.from('lesson_reports').insert(payload);if(error)return message(e.currentTarget.querySelector('.message'),error.message,true);if(payload.overall_score!=null||payload.next_focus){const changes={};if(payload.overall_score!=null)changes.summit_score=payload.overall_score;if(payload.next_focus)changes.current_focus=payload.next_focus;const {data}=await client.from('students').update(changes).eq('id',selected.id).select().single();if(data){students=students.map(s=>s.id===data.id?data:s);selectStudent(data.id)}}message($('#portalMessage'),t[lang].saved);e.currentTarget.reset();closeModals()});
+  client.auth.onAuthStateChange((event,session)=>{if(session&&isPasswordSetupLink()&&(event==='PASSWORD_RECOVERY'||event==='SIGNED_IN'))showPasswordSetup()});
+  translate();client.auth.getSession().then(({data})=>{if(!data.session)return;if(isPasswordSetupLink())showPasswordSetup();else loadPortal(data.session.user)});
+})();

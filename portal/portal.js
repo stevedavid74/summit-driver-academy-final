@@ -6,17 +6,20 @@
   };
   Object.assign(t.en,{secureSetup:'Secure account setup',createPassword:'Create your secure password.',setupIntro:'Choose a unique password for the Summit portal. Do not reuse your Gmail password.',newPassword:'New password',confirmPassword:'Confirm new password',savePassword:'Save password and enter portal',passwordGuidance:'Use at least 12 characters, including a mix of words, numbers, or symbols.',passwordMismatch:'The passwords do not match.',passwordTooShort:'Your password must contain at least 12 characters.',passwordSaved:'Your password has been saved securely.',setupFailed:'Your password could not be saved. Please request a new invitation.'});
   Object.assign(t.fr,{secureSetup:'Configuration sécurisée du compte',createPassword:'Créez votre mot de passe sécurisé.',setupIntro:'Choisissez un mot de passe unique pour le portail Summit. Ne réutilisez pas votre mot de passe Gmail.',newPassword:'Nouveau mot de passe',confirmPassword:'Confirmer le nouveau mot de passe',savePassword:'Enregistrer le mot de passe et accéder au portail',passwordGuidance:'Utilisez au moins 12 caractères, avec un mélange de mots, de chiffres ou de symboles.',passwordMismatch:'Les mots de passe ne correspondent pas.',passwordTooShort:'Votre mot de passe doit contenir au moins 12 caractères.',passwordSaved:'Votre mot de passe a été enregistré de façon sécurisée.',setupFailed:'Votre mot de passe n’a pas pu être enregistré. Veuillez demander une nouvelle invitation.'});
+  Object.assign(t.en,{weekRequests:'Week requests',preferredTrainingWeeks:'Preferred training weeks',noWeekRequests:'No preferred weeks have been requested yet.',requestedWeek:'Requested week',founding:'Founding 30',regular:'Regular'});
+  Object.assign(t.fr,{weekRequests:'Demandes de semaines',preferredTrainingWeeks:'Semaines de formation préférées',noWeekRequests:'Aucune semaine préférée n’a encore été demandée.',requestedWeek:'Semaine demandée',founding:'30 fondateurs',regular:'Régulier'});
   const $ = s => document.querySelector(s);
   const config = window.SUMMIT_PORTAL_CONFIG;
   const client = window.supabase.createClient(config.supabaseUrl, config.supabasePublishableKey);
   let lang = localStorage.getItem('summitPortalLanguage') || (location.pathname.includes('/fr/') ? 'fr' : 'en');
-  let profile = null, students = [], selected = null;
+  let profile = null, students = [], registrations = [], selected = null;
 
-  function translate(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t[lang][el.dataset.i18n]});$('#languageToggle').textContent=lang==='en'?'FR':'EN';localStorage.setItem('summitPortalLanguage',lang);renderStudents();if(selected)renderDetail(selected)}
+  function translate(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t[lang][el.dataset.i18n]});$('#languageToggle').textContent=lang==='en'?'FR':'EN';localStorage.setItem('summitPortalLanguage',lang);renderStudents();renderRegistrations();if(selected)renderDetail(selected)}
   function message(el,text,error=false){el.textContent=text;el.classList.toggle('error',error)}
   function openModal(id){$('#'+id).classList.remove('hidden');$('#modalBackdrop').classList.remove('hidden')}
   function closeModals(){document.querySelectorAll('.modal-card').forEach(x=>x.classList.add('hidden'));$('#modalBackdrop').classList.add('hidden')}
   function dateText(value){if(!value)return '—';return new Intl.DateTimeFormat(lang==='fr'?'fr-CA':'en-CA',{dateStyle:'medium',timeStyle:'short'}).format(new Date(value))}
+  function weekText(value){if(!value)return '—';const start=new Date(`${value}T12:00:00`),end=new Date(start);end.setDate(end.getDate()+4);const format=new Intl.DateTimeFormat(lang==='fr'?'fr-CA':'en-CA',{month:'short',day:'numeric',year:'numeric'});return `${format.format(start)} – ${format.format(end)}`}
   function statusText(value){return t[lang][value]||value}
   function isPasswordSetupLink(){const params=`${location.search}&${location.hash.replace(/^#/,'')}`;return /(?:^|[?&#])(type=(?:invite|recovery)|access_token=|code=)/.test(params)}
   function showPasswordSetup(){
@@ -35,12 +38,14 @@
     students=s||[];$('#loginView').classList.add('hidden');$('#portalView').classList.remove('hidden');$('#signOutButton').classList.remove('hidden');
     $('#staffGreeting').textContent=p.full_name;$('#staffRole').textContent=t[lang][p.role];$('#newStudentButton').classList.toggle('hidden',p.role!=='owner');
     updateStats();renderStudents();if(students[0])selectStudent(students[0].id);
-    if(p.role==='owner') await loadInstructors();
+    if(p.role==='owner'){await Promise.all([loadInstructors(),loadRegistrations()]);}
   }
+  async function loadRegistrations(){const {data,error}=await client.from('registrations').select('id,name,email,phone,language,tuition_tier,preferred_week_start,created_at').order('created_at',{ascending:false});if(error)return message($('#portalMessage'),t[lang].loadFailed,true);registrations=data||[];$('#registrationPanel').classList.remove('hidden');renderRegistrations()}
   async function loadInstructors(){const {data}=await client.from('staff_profiles').select('user_id,full_name,role').eq('is_active',true).order('full_name');$('#instructorSelect').innerHTML=(data||[]).map(x=>`<option value="${x.user_id}">${escapeHtml(x.full_name)} — ${t[lang][x.role]}</option>`).join('')}
   function updateStats(){const now=Date.now();$('#studentCount').textContent=students.length;$('#activeCount').textContent=students.filter(x=>x.status==='active').length;$('#upcomingCount').textContent=students.filter(x=>x.next_lesson_at&&new Date(x.next_lesson_at).getTime()>now).length}
   function escapeHtml(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
   function renderStudents(){if(!$('#studentList'))return;$('#studentList').innerHTML=students.map(s=>`<button class="student-button ${selected&&selected.id===s.id?'active':''}" data-student="${s.id}" type="button"><span>${escapeHtml(s.full_name)}<small>${escapeHtml(s.current_focus||statusText(s.status))}</small></span><b>${s.in_car_hours}/10</b></button>`).join('');$('#emptyStudents').classList.toggle('hidden',students.length>0)}
+  function renderRegistrations(){if(!$('#registrationList'))return;$('#registrationCount').textContent=registrations.length;$('#registrationList').innerHTML=registrations.map(r=>`<article class="registration-row"><div><strong>${escapeHtml(r.name)}</strong><small>${escapeHtml(r.email)} · ${escapeHtml(r.phone)}</small></div><div><span>${t[lang].requestedWeek}</span><b>${weekText(r.preferred_week_start)}</b></div><em>${t[lang][r.tuition_tier]||r.tuition_tier}</em></article>`).join('');$('#emptyRegistrations').classList.toggle('hidden',registrations.length>0)}
   function selectStudent(id){selected=students.find(s=>s.id===id);if(!selected)return;renderStudents();renderDetail(selected)}
   function renderDetail(s){$('#studentEmptyState').classList.add('hidden');$('#studentDetail').classList.remove('hidden');$('#detailName').textContent=s.full_name;$('#detailStatus').textContent=statusText(s.status);$('#onlineProgress').value=s.online_hours;$('#onlineValue').textContent=`${s.online_hours}/30 ${t[lang].hours}`;$('#carProgress').value=s.in_car_hours;$('#carValue').textContent=`${s.in_car_hours}/10 ${t[lang].hours}`;$('#scoreProgress').value=s.summit_score||0;$('#scoreValue').textContent=s.summit_score==null?'—':`${s.summit_score}%`;$('#detailFocus').textContent=s.current_focus||'—';$('#detailNextLesson').textContent=dateText(s.next_lesson_at)}
 

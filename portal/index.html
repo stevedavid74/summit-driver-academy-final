@@ -6,6 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Instructor Portal | Summit Driver Academy</title>
   <link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="portal-calendar.css">
 </head>
 <body>
   <header class="topbar">
@@ -60,6 +61,12 @@
         <article><strong id="upcomingCount">0</strong><span data-i18n="upcomingLessons">Upcoming lessons</span></article>
         <article><strong id="activeCount">0</strong><span data-i18n="activeStudents">Active students</span></article>
       </div>
+
+      <section id="registrationPanel" class="panel registration-panel hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="weekRequests">Week requests</p><h2 data-i18n="preferredTrainingWeeks">Preferred training weeks</h2></div><span id="registrationCount" class="role-badge">0</span></div>
+        <div id="registrationList" class="registration-list"></div>
+        <p id="emptyRegistrations" class="empty" data-i18n="noWeekRequests">No preferred weeks have been requested yet.</p>
+      </section>
 
       <div class="portal-grid">
         <section class="panel roster-panel">

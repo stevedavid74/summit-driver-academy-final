@@ -112,6 +112,7 @@ async function submitPreregistration(form){
     email:String(formData.get('email')||'').trim(),
     phone:String(formData.get('phone')||'').trim(),
     preferredWeekStart:String(formData.get('preferred-week')||'').trim(),
+    preferredInstructor:String(formData.get('preferred-instructor')||'no_preference').trim(),
     language:lang,
     consent:formData.get('consent')==='on'
   };

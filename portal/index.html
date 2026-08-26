@@ -8,6 +8,7 @@
   <title>Instructor Portal | Summit Driver Academy</title>
   <link rel="stylesheet" href="portal.css">
   <link rel="stylesheet" href="portal-calendar.css">
+  <link rel="stylesheet" href="parent-sharing.css">
 </head>
 <body>
   <header class="topbar">
@@ -17,6 +18,7 @@
     </a>
     <div class="top-actions">
       <button id="languageToggle" class="ghost" type="button">FR</button>
+      <button id="changePasswordButton" class="ghost hidden" type="button" data-i18n="changePassword">Change password</button>
       <button id="signOutButton" class="ghost hidden" type="button" data-i18n="signOut">Sign out</button>
     </div>
   </header>
@@ -86,7 +88,10 @@
               <label><span data-i18n="summitScore">Summit score</span><progress id="scoreProgress" max="100"></progress><b id="scoreValue"></b></label>
             </div>
             <dl class="student-meta"><div><dt data-i18n="currentFocus">Current focus</dt><dd id="detailFocus">—</dd></div><div><dt data-i18n="nextLesson">Next lesson</dt><dd id="detailNextLesson">—</dd></div><div><dt data-i18n="confirmedInstructor">Confirmed instructor</dt><dd id="detailInstructor">—</dd></div><div><dt data-i18n="confirmedWeek">Confirmed training week</dt><dd id="detailWeek">—</dd></div></dl>
-            <button id="showReportButton" class="primary" type="button" data-i18n="recordLesson">Record a lesson</button>
+            <div class="detail-actions">
+              <button id="showReportButton" class="primary" type="button" data-i18n="recordLesson">Record a lesson</button>
+              <button id="connectParentButton" class="small hidden" type="button" data-i18n="connectParent">Connect parent</button>
+            </div>
           </div>
         </section>
       </div>
@@ -114,10 +119,32 @@
           <label><span data-i18n="laneControl">Lane control</span><input name="lane_control_score" type="number" min="0" max="100"></label>
           <label><span data-i18n="parking">Parking</span><input name="parking_score" type="number" min="0" max="100"></label>
           <label><span data-i18n="defensiveDriving">Defensive driving</span><input name="defensive_driving_score" type="number" min="0" max="100"></label>
-          <label class="wide"><span data-i18n="lessonNotes">Lesson notes</span><textarea name="lesson_notes" rows="4"></textarea></label>
+          <label class="wide"><span data-i18n="lessonNotes">Private instructor notes (staff only)</span><textarea name="lesson_notes" rows="4"></textarea></label>
           <label class="wide"><span data-i18n="nextFocus">Next focus</span><textarea name="next_focus" rows="2"></textarea></label>
+          <label class="wide"><span data-i18n="parentSummary">Parent progress summary</span><textarea name="parent_summary" rows="3" placeholder="A clear, constructive summary for the student and family."></textarea></label>
+          <label class="wide share-control"><input name="share_with_parent" type="checkbox"><span data-i18n="shareWithParent">Share this lesson summary and scores with the parent dashboard</span></label>
         </div>
         <button class="primary" type="submit" data-i18n="saveReport">Save lesson report</button><p class="message" role="status"></p>
+      </form>
+
+      <form id="parentForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="familyAccess">Family access</p><h2 id="parentStudentName"></h2></div><button class="icon-button" data-close="parentForm" type="button" aria-label="Close">×</button></div>
+        <p data-i18n="parentInviteIntro">Connect this student to a protected family account. A secure invitation will be emailed to the parent.</p>
+        <div class="form-grid">
+          <label><span data-i18n="parentName">Parent or guardian name</span><input name="full_name" required></label>
+          <label><span data-i18n="parentEmail">Parent or guardian email</span><input name="email" type="email" required></label>
+          <label><span data-i18n="language">Language</span><select name="preferred_language"><option value="en">English</option><option value="fr">Français</option></select></label>
+        </div>
+        <button class="primary" type="submit" data-i18n="sendParentInvite">Send secure invitation</button><p class="message" role="status"></p>
+      </form>
+      <form id="changePasswordForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="accountSecurity">Account security</p><h2 data-i18n="changePassword">Change password</h2></div><button class="icon-button" data-close="changePasswordForm" type="button" aria-label="Close">×</button></div>
+        <p data-i18n="changePasswordIntro">Choose a unique password for the Summit portal. Do not reuse your email password.</p>
+        <div class="form-grid">
+          <label class="wide"><span data-i18n="newPassword">New password</span><input name="new_password" type="password" autocomplete="new-password" minlength="12" required></label>
+          <label class="wide"><span data-i18n="confirmPassword">Confirm new password</span><input name="confirm_password" type="password" autocomplete="new-password" minlength="12" required></label>
+        </div>
+        <button class="primary" type="submit" data-i18n="saveNewPassword">Save new password</button><p class="message" role="status"></p>
       </form>
       <div id="modalBackdrop" class="backdrop hidden"></div>
       <p id="portalMessage" class="message" role="status"></p>
@@ -125,6 +152,6 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js"></script>
+  <script src="portal.js?v=20260826-password-change"></script>
 </body>
 </html>

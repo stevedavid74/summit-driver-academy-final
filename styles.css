@@ -939,3 +939,51 @@ footer {
     line-height: 1.72;
   }
 }
+/* Live Founding 30 counter near the hero */
+.hero-founding-counter {
+  margin: 24px auto 0;
+  width: min(100%, 620px);
+  padding: 15px 22px;
+  border: 1px solid rgba(214, 168, 76, 0.42);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(7, 16, 33, 0.96), rgba(13, 31, 63, 0.96));
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.hero-founding-counter-label {
+  color: var(--gold2);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.hero-founding-counter strong {
+  color: #fff;
+  font-size: clamp(17px, 2vw, 21px);
+}
+
+.hero-founding-counter small {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 680px) {
+  .hero-founding-counter {
+    border-radius: 18px;
+    padding: 14px 16px;
+    gap: 6px;
+  }
+
+  .hero-founding-counter-label,
+  .hero-founding-counter strong {
+    flex-basis: 100%;
+  }
+}

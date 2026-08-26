@@ -77,6 +77,11 @@
 <a class="button button-primary" href="#contact">Reserve a Founding Spot</a>
 <a class="button button-secondary" href="#path">Explore the Summit Path™</a>
 </div>
+<div class="hero-founding-counter" aria-label="Live Founding 30 availability">
+<span class="hero-founding-counter-label">Founding 30 availability</span>
+<strong><span data-founding-remaining>—</span> of 30 places remaining</strong>
+<small data-founding-status>Checking live availability…</small>
+</div>
 <section class="section about-section" id="about">
 <div class="section-heading reveal"><p class="eyebrow">About Summit Driver Academy</p><h2>Built from a parent’s perspective.</h2><p>Clear communication, visible progress and a higher standard of driver education for every family.</p></div>
 <div class="about-story reveal">
@@ -141,7 +146,7 @@
 </div>
 <div aria-label="Founding 30 tuition" class="founding-price"><small>Founding tuition</small><strong>$900</strong><span>+ applicable taxes</span><em class="regular-tuition">Regular tuition after Founding 30: $1,200</em><p class="approval-status">Pre-registration only · Subject to final MTO approval</p></div>
 
-<div class="founding-counter" aria-label="Limited Founding 30 offer"><div class="founding-counter-top"><span class="founding-counter-badge">Limited Founding Offer</span><strong>Only 30 founding places will be offered</strong></div><p>Eligible students will be contacted in pre-registration order after final MTO approval.</p></div>
+          <div class="founding-counter" aria-label="Live Founding 30 availability"><div class="founding-counter-top"><span class="founding-counter-badge">Limited Founding Offer</span><strong><span data-founding-remaining>—</span> of 30 Founding places remaining</strong></div><div class="founding-progress-track" role="progressbar" aria-label="Founding places claimed" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0"><span class="founding-progress-fill" data-founding-progress></span></div><div class="founding-counter-meta"><span data-founding-status>Checking live availability…</span><span data-founding-claimed></span></div><p>Eligible students will be contacted in pre-registration order after final MTO approval.</p></div>
 
 </div>
 </section>
@@ -267,7 +272,7 @@
 </div>
 <nav aria-label="Footer navigation" class="footer-links"><a href="#path">Program</a><a href="#families">Why Summit</a><a href="#team">Team</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="privacy.html">Privacy</a><a href="enrollment-policy.html">Enrollment Policy</a></nav>
 </footer>
-<script>window.SUMMIT_REGISTRATION = { endpoint: "https://zrnylkqtofjitxtykhxq.supabase.co/functions/v1/register" };</script>
+<script>window.SUMMIT_REGISTRATION = { endpoint: "https://zrnylkqtofjitxtykhxq.supabase.co/functions/v1/register", availabilityEndpoint: "https://zrnylkqtofjitxtykhxq.supabase.co/functions/v1/founding-availability" };</script>
 <script src="script.js"></script>
 </body>
 </html>

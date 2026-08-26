@@ -83,6 +83,42 @@ updatePremiumExperience();
 // Secure registration endpoint. The server—not the browser—assigns Founding 30
 // or regular tuition and sends the matching bilingual confirmation.
 const summitRegistrationConfig=window.SUMMIT_REGISTRATION||{endpoint:'https://zrnylkqtofjitxtykhxq.supabase.co/functions/v1/register'};
+
+async function updateFoundingAvailability(){
+  const remainingElements=[...document.querySelectorAll('[data-founding-remaining]')];
+  if(!remainingElements.length)return;
+  const lang=(document.documentElement.lang||'en').toLowerCase().startsWith('fr')?'fr':'en';
+  const endpoint=summitRegistrationConfig.availabilityEndpoint;
+  const statusElements=[...document.querySelectorAll('[data-founding-status]')];
+  const progressElements=[...document.querySelectorAll('[data-founding-progress]')];
+  const claimedElements=[...document.querySelectorAll('[data-founding-claimed]')];
+  const setStatus=(value)=>statusElements.forEach((element)=>{element.textContent=value;});
+  if(!endpoint){setStatus(lang==='fr'?'Disponibilité temporairement indisponible':'Availability temporarily unavailable');return;}
+  try{
+    const response=await fetch(endpoint,{headers:{Accept:'application/json'},cache:'no-store'});
+    if(!response.ok)throw new Error(`Availability request failed: ${response.status}`);
+    const data=await response.json();
+    const capacity=Number(data.capacity);
+    const claimed=Number(data.claimed);
+    const remaining=Number(data.remaining);
+    if(!Number.isFinite(capacity)||!Number.isFinite(claimed)||!Number.isFinite(remaining)||capacity<=0)throw new Error('Invalid availability response');
+    remainingElements.forEach((element)=>{element.textContent=String(remaining);});
+    claimedElements.forEach((element)=>{element.textContent=lang==='fr'?`${claimed} place${claimed===1?'':'s'} réservée${claimed===1?'':'s'}`:`${claimed} place${claimed===1?'':'s'} claimed`;});
+    progressElements.forEach((element)=>{
+      element.style.width=`${Math.min(100,Math.max(0,(claimed/capacity)*100))}%`;
+      const track=element.closest('[role="progressbar"]');
+      if(track){track.setAttribute('aria-valuenow',String(claimed));track.setAttribute('aria-valuemax',String(capacity));}
+    });
+    setStatus(lang==='fr'?'Disponibilité mise à jour automatiquement':'Availability updates automatically');
+  }catch(error){
+    console.error(error);
+    remainingElements.forEach((element)=>{element.textContent='—';});
+    claimedElements.forEach((element)=>{element.textContent='';});
+    setStatus(lang==='fr'?'Disponibilité temporairement indisponible':'Availability temporarily unavailable');
+  }
+}
+
+updateFoundingAvailability();
 const summitRegistrationReady=Boolean(summitRegistrationConfig.endpoint);
 
 function setFormStatus(form,message,type='info'){
@@ -111,8 +147,8 @@ async function submitPreregistration(form){
     name:String(formData.get('name')||'').trim(),
     email:String(formData.get('email')||'').trim(),
     phone:String(formData.get('phone')||'').trim(),
-    preferredWeekStart:String(formData.get('preferred-week')||'').trim(),
     preferredInstructor:String(formData.get('preferred-instructor')||'no_preference').trim(),
+    preferredWeekStart:String(formData.get('preferred-week')||'').trim(),
     language:lang,
     consent:formData.get('consent')==='on'
   };

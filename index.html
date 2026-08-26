@@ -2,6 +2,11 @@
 
 <html lang="en">
 <head>
+<script>
+  if (/(?:^|&)type=invite(?:&|$)/.test(location.hash.replace(/^#/, ''))) {
+    location.replace('/parent/' + location.search + location.hash);
+  }
+</script>
   <meta name="google-site-verification" content="ymYVEwKS_wI_VDzBYuymHHFyjjssd9YG1delGJghs8E" />
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>

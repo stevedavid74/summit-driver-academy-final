@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="portal-calendar.css?v=20260826-calendar-view">
   <link rel="stylesheet" href="portal-scheduling.css?v=20260826-reschedule-cancel">
   <link rel="stylesheet" href="parent-sharing.css">
+  <link rel="stylesheet" href="records.css?v=20260826-mto-records">
 </head>
 <body>
   <header class="topbar">
@@ -104,6 +105,21 @@
         </section>
       </div>
 
+      <section id="recordsPanel" class="panel records-panel hidden">
+        <div class="section-heading records-heading">
+          <div><p class="eyebrow" data-i18n="schoolRecords">School records</p><h2 data-i18n="mtoStudentFile">MTO student file</h2></div>
+          <div class="records-actions">
+            <button id="editStudentRecordButton" class="small" type="button" data-i18n="editStudentRecord">Edit student details</button>
+            <button id="downloadRecordButton" class="primary" type="button" data-i18n="downloadPdf">Download PDF</button>
+          </div>
+        </div>
+        <p class="records-note" data-i18n="recordsNote">Owner and manager record. Keep the source records for at least three years.</p>
+        <div id="recordCompleteness" class="completeness" role="status"></div>
+        <div id="lessonRecordList" class="lesson-record-list"></div>
+        <p id="emptyLessonRecords" class="empty" data-i18n="noLessonRecords">No lesson records have been created for this student.</p>
+        <details class="audit-details"><summary data-i18n="auditHistory">Revision history</summary><div id="auditList" class="audit-list"></div></details>
+      </section>
+
       <form id="studentForm" class="panel modal-card hidden">
         <div class="section-heading"><h2 data-i18n="addStudent">Add student</h2><button class="icon-button" data-close="studentForm" type="button" aria-label="Close">×</button></div>
         <div class="form-grid">
@@ -130,6 +146,8 @@
         <div class="section-heading"><div><p class="eyebrow" data-i18n="lessonReport">Lesson report</p><h2 id="reportStudentName"></h2></div><button class="icon-button" data-close="reportForm" type="button" aria-label="Close">×</button></div>
         <div class="form-grid">
           <label><span data-i18n="lessonDate">Lesson date</span><input name="lesson_date" type="date" required></label>
+          <label><span data-i18n="startTime">Start time</span><input name="started_at" type="time" required></label>
+          <label><span data-i18n="endTime">End time</span><input name="ended_at" type="time" required></label>
           <label><span data-i18n="duration">Duration (minutes)</span><input name="duration_minutes" type="number" min="15" max="240" step="15" value="120" required></label>
           <label><span data-i18n="overallScore">Overall score</span><input name="overall_score" type="number" min="0" max="100"></label>
           <label><span data-i18n="observation">Observation</span><input name="observation_score" type="number" min="0" max="100"></label>
@@ -141,8 +159,44 @@
           <label class="wide"><span data-i18n="nextFocus">Next focus</span><textarea name="next_focus" rows="2"></textarea></label>
           <label class="wide"><span data-i18n="parentSummary">Parent progress summary</span><textarea name="parent_summary" rows="3" placeholder="A clear, constructive summary for the student and family."></textarea></label>
           <label class="wide share-control"><input name="share_with_parent" type="checkbox"><span data-i18n="shareWithParent">Share this lesson summary and scores with the parent dashboard</span></label>
+          <label><span data-i18n="studentSignature">Student signature (typed full name)</span><input name="student_signature_name"></label>
+          <label><span data-i18n="instructorSignature">Instructor signature (typed full name)</span><input name="instructor_signature_name"></label>
         </div>
         <button class="primary" type="submit" data-i18n="saveReport">Save lesson report</button><p class="message" role="status"></p>
+      </form>
+
+      <form id="studentRecordForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="schoolRecords">School records</p><h2 id="studentRecordName"></h2></div><button class="icon-button" data-close="studentRecordForm" type="button" aria-label="Close">×</button></div>
+        <p data-i18n="studentRecordIntro">Complete the information required for the student's retained training file.</p>
+        <div class="form-grid">
+          <label><span data-i18n="dateOfBirth">Date of birth</span><input name="date_of_birth" type="date"></label>
+          <label><span data-i18n="gender">Gender</span><input name="gender"></label>
+          <label class="wide"><span data-i18n="address">Address</span><textarea name="address" rows="2"></textarea></label>
+          <label><span data-i18n="driverLicenceNumber">Driver's licence number</span><input name="driver_licence_number" autocomplete="off"></label>
+          <label><span data-i18n="courseStartDate">Course start date</span><input name="course_start_date" type="date"></label>
+          <label><span data-i18n="courseCompletionDate">Course completion date</span><input name="course_completion_date" type="date"></label>
+          <label><span data-i18n="certificateNumber">MTO certificate/reference number</span><input name="ministry_certificate_number"></label>
+          <label><span data-i18n="ministryAcknowledged">MTO acknowledgement date</span><input name="ministry_acknowledged_at" type="date"></label>
+        </div>
+        <button class="primary" type="submit" data-i18n="saveStudentRecord">Save student record</button><p class="message" role="status"></p>
+      </form>
+
+      <form id="editLessonRecordForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="schoolRecords">School records</p><h2 data-i18n="correctLessonRecord">Correct lesson record</h2></div><button class="icon-button" data-close="editLessonRecordForm" type="button" aria-label="Close">×</button></div>
+        <input name="id" type="hidden">
+        <div class="form-grid">
+          <label><span data-i18n="lessonDate">Lesson date</span><input name="lesson_date" type="date" required></label>
+          <label><span data-i18n="startTime">Start time</span><input name="started_at" type="time" required></label>
+          <label><span data-i18n="endTime">End time</span><input name="ended_at" type="time" required></label>
+          <label><span data-i18n="duration">Actual driving time (minutes)</span><input name="duration_minutes" type="number" min="15" max="240" step="15" required></label>
+          <label><span data-i18n="overallScore">Overall score</span><input name="overall_score" type="number" min="0" max="100"></label>
+          <label><span data-i18n="status">Status</span><select name="status"><option value="draft">Draft</option><option value="completed">Completed</option><option value="voided">Voided</option></select></label>
+          <label class="wide"><span data-i18n="lessonNotes">Private instructor notes (staff only)</span><textarea name="lesson_notes" rows="3"></textarea></label>
+          <label class="wide"><span data-i18n="nextFocus">Next focus</span><textarea name="next_focus" rows="2"></textarea></label>
+          <label><span data-i18n="studentSignature">Student signature (typed full name)</span><input name="student_signature_name"></label>
+          <label><span data-i18n="instructorSignature">Instructor signature (typed full name)</span><input name="instructor_signature_name"></label>
+        </div>
+        <button class="primary" type="submit" data-i18n="saveCorrection">Save correction</button><p class="message" role="status"></p>
       </form>
 
       <form id="parentForm" class="panel modal-card hidden">
@@ -169,7 +223,10 @@
     </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260826-road-readiness"></script>
+  <script src="portal.js?v=20260826-mto-records"></script>
+  <script src="records.js?v=20260826-mto-records"></script>
 </body>
 </html>

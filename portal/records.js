@@ -1,0 +1,77 @@
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const text = {
+    en:{complete:'Record complete for PDF export',missing:'Missing required record details',edit:'Correct',voided:'Voided',draft:'Draft',completed:'Completed',noAudit:'No revisions yet.',saved:'Student record saved.',corrected:'Lesson correction saved and added to revision history.',downloadFailed:'The PDF could not be created. Refresh and try again.',schoolRecords:'School records',mtoStudentFile:'MTO student file',editStudentRecord:'Edit student details',downloadPdf:'Download PDF',recordsNote:'Owner and manager record. Keep the source records for at least three years.',noLessonRecords:'No lesson records have been created for this student.',auditHistory:'Revision history',studentRecordIntro:"Complete the information required for the student's retained training file.",dateOfBirth:'Date of birth',gender:'Gender',address:'Address',driverLicenceNumber:"Driver's licence number",courseStartDate:'Course start date',courseCompletionDate:'Course completion date',certificateNumber:'MTO certificate/reference number',ministryAcknowledged:'MTO acknowledgement date',saveStudentRecord:'Save student record',correctLessonRecord:'Correct lesson record',saveCorrection:'Save correction',startTime:'Start time',endTime:'End time',studentSignature:'Student signature (typed full name)',instructorSignature:'Instructor signature (typed full name)',status:'Status'},
+    fr:{complete:'Dossier complet pour l’exportation PDF',missing:'Renseignements obligatoires manquants',edit:'Corriger',voided:'Annulé',draft:'Brouillon',completed:'Terminé',noAudit:'Aucune révision.',saved:'Dossier de l’élève enregistré.',corrected:'Correction enregistrée dans l’historique des révisions.',downloadFailed:'Le PDF n’a pas pu être créé. Actualisez la page et réessayez.',schoolRecords:'Dossiers de l’école',mtoStudentFile:'Dossier MTO de l’élève',editStudentRecord:'Modifier les détails',downloadPdf:'Télécharger le PDF',recordsNote:'Dossier du propriétaire et du gestionnaire. Conservez les dossiers sources pendant au moins trois ans.',noLessonRecords:'Aucun dossier de leçon n’a été créé pour cet élève.',auditHistory:'Historique des révisions',studentRecordIntro:'Remplissez les renseignements requis pour le dossier de formation conservé de l’élève.',dateOfBirth:'Date de naissance',gender:'Genre',address:'Adresse',driverLicenceNumber:'Numéro de permis de conduire',courseStartDate:'Date de début du cours',courseCompletionDate:'Date de fin du cours',certificateNumber:'Numéro de certificat/référence MTO',ministryAcknowledged:'Date d’accusé de réception MTO',saveStudentRecord:'Enregistrer le dossier',correctLessonRecord:'Corriger le dossier de leçon',saveCorrection:'Enregistrer la correction',startTime:'Heure de début',endTime:'Heure de fin',studentSignature:'Signature de l’élève (nom complet saisi)',instructorSignature:'Signature du moniteur (nom complet saisi)',status:'État'}
+  };
+  let reports=[],audit=[],student=null;
+  const lang=()=>document.documentElement.lang==='fr'?'fr':'en';
+  const tr=k=>text[lang()][k]||k;
+  const esc=(v='')=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const displayDate=v=>v?new Intl.DateTimeFormat(lang()==='fr'?'fr-CA':'en-CA',{dateStyle:'medium'}).format(new Date(`${String(v).slice(0,10)}T12:00:00`)):'—';
+  const open=id=>{$('#'+id).classList.remove('hidden');$('#modalBackdrop').classList.remove('hidden')};
+  const close=()=>{document.querySelectorAll('.modal-card').forEach(x=>x.classList.add('hidden'));$('#modalBackdrop').classList.add('hidden')};
+  const portal=()=>window.SummitPortal;
+
+  function translate(){document.querySelectorAll('#recordsPanel [data-i18n],#studentRecordForm [data-i18n],#editLessonRecordForm [data-i18n]').forEach(el=>{if(text[lang()][el.dataset.i18n])el.textContent=tr(el.dataset.i18n)});render()}
+  function requiredMissing(){
+    const missing=[];
+    [['date_of_birth',tr('dateOfBirth')],['gender',tr('gender')],['address',tr('address')],['phone','Phone'],['driver_licence_number',tr('driverLicenceNumber')],['course_start_date',tr('courseStartDate')]].forEach(([key,label])=>{if(!student?.[key])missing.push(label)});
+    reports.filter(r=>r.status!=='voided').forEach((r,index)=>[['started_at',tr('startTime')],['ended_at',tr('endTime')],['duration_minutes','Actual driving time'],['student_signature_name',tr('studentSignature')],['instructor_signature_name',tr('instructorSignature')]].forEach(([key,label])=>{if(!r[key])missing.push(`Lesson ${index+1}: ${label}`)}));
+    return missing;
+  }
+  function instructorName(id){return portal().instructors.find(x=>x.user_id===id)?.full_name||'—'}
+  function render(){
+    if(!student)return;
+    const missing=requiredMissing(),box=$('#recordCompleteness');
+    box.className=`completeness ${missing.length?'is-incomplete':'is-complete'}`;
+    box.innerHTML=missing.length?`<strong>${esc(tr('missing'))} (${missing.length})</strong><span>${esc(missing.slice(0,6).join(' · '))}${missing.length>6?' …':''}</span>`:`<strong>${esc(tr('complete'))}</strong>`;
+    $('#lessonRecordList').innerHTML=reports.map(r=>`<article class="lesson-record ${r.status==='voided'?'is-voided':''}"><div><strong>${esc(displayDate(r.lesson_date))}</strong><small>${esc((r.started_at||'—').slice(0,5))}–${esc((r.ended_at||'—').slice(0,5))} · ${esc(r.duration_minutes)} min · ${esc(instructorName(r.instructor_id))}</small><span>${esc(r.lesson_notes||r.next_focus||'No notes')}</span></div><div><b>${r.overall_score==null?'—':`${r.overall_score}%`}</b><em>${esc(tr(r.status))}</em><button class="small edit-record" data-report="${r.id}" type="button">${esc(tr('edit'))}</button></div></article>`).join('');
+    $('#emptyLessonRecords').classList.toggle('hidden',reports.length>0);
+    $('#auditList').innerHTML=audit.length?audit.map(a=>`<div><strong>${esc(a.action)}</strong><span>${esc(new Date(a.changed_at).toLocaleString(lang()==='fr'?'fr-CA':'en-CA'))}</span><small>${esc(a.lesson_report_id)}</small></div>`).join(''):`<p class="empty">${esc(tr('noAudit'))}</p>`;
+  }
+  async function loadRecords(){
+    if(!student)return;
+    const [{data:r,error:re},{data:a,error:ae}]=await Promise.all([
+      portal().client.from('lesson_reports').select('*').eq('student_id',student.id).order('lesson_date',{ascending:false}).order('created_at',{ascending:false}),
+      portal().client.from('lesson_report_audit').select('id,lesson_report_id,action,changed_by,changed_at').eq('student_id',student.id).order('changed_at',{ascending:false})
+    ]);
+    if(re||ae){$('#recordCompleteness').textContent='Records could not be loaded.';return}
+    reports=r||[];audit=a||[];render();
+  }
+  function fillForm(form,record,fields){fields.forEach(name=>{if(form.elements[name])form.elements[name].value=record[name]?String(record[name]).slice(0,form.elements[name].type==='date'?10:form.elements[name].type==='time'?5:undefined):''})}
+  function pdfSafe(v){return v==null||v===''?'Not recorded':String(v)}
+  function downloadPdf(){
+    try{
+      if(!window.jspdf?.jsPDF)throw new Error('PDF library unavailable');
+      const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'pt',format:'letter'}),gold=[217,170,54],navy=[7,21,45],margin=42,pageWidth=612;
+      const addFooter=()=>{const pages=doc.internal.getNumberOfPages();for(let i=1;i<=pages;i++){doc.setPage(i);doc.setDrawColor(...gold);doc.line(margin,754,pageWidth-margin,754);doc.setFontSize(8);doc.setTextColor(85);doc.text('Operational training record — not a driver education certificate.',margin,770);doc.text(`Page ${i} of ${pages}`,pageWidth-margin,770,{align:'right'})}};
+      doc.setFillColor(...navy);doc.rect(0,0,pageWidth,92,'F');doc.setTextColor(...gold);doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('SUMMIT DRIVER ACADEMY',margin,37);doc.setTextColor(255);doc.setFontSize(12);doc.text('Student Training Record — Operational Copy',margin,61);doc.setFontSize(8);doc.text(`Generated ${new Date().toLocaleString('en-CA')}  •  Record ID ${student.id}`,margin,78);
+      doc.setTextColor(20);doc.setFontSize(15);doc.text(pdfSafe(student.full_name),margin,122);
+      doc.autoTable({startY:138,theme:'grid',styles:{fontSize:8,cellPadding:5},headStyles:{fillColor:navy,textColor:255},head:[['Student information','Value','Student information','Value']],body:[
+        ['Date of birth',pdfSafe(student.date_of_birth),'Gender',pdfSafe(student.gender)],
+        ['Address',pdfSafe(student.address),'Telephone',pdfSafe(student.phone)],
+        ["Driver's licence",pdfSafe(student.driver_licence_number),'Course start',pdfSafe(student.course_start_date)],
+        ['Course completion',pdfSafe(student.course_completion_date),'MTO reference',pdfSafe(student.ministry_certificate_number)],
+        ['Online training',`${student.online_hours||0}/30 hours`,'In-car total',`${student.in_car_hours||0}/10 hours`],
+        ['Summit score',student.summit_score==null?'Not recorded':`${student.summit_score}%`,'Road-test readiness',student.road_test_readiness==null?'Not recorded':`${student.road_test_readiness}%`]
+      ]});
+      let y=doc.lastAutoTable.finalY+20;doc.setFontSize(12);doc.setTextColor(...navy);doc.text('In-vehicle training record',margin,y);
+      doc.autoTable({startY:y+8,theme:'grid',styles:{fontSize:7,cellPadding:4,overflow:'linebreak'},headStyles:{fillColor:navy,textColor:255},columnStyles:{0:{cellWidth:53},1:{cellWidth:55},2:{cellWidth:44},3:{cellWidth:84},4:{cellWidth:45},5:{cellWidth:90},6:{cellWidth:90}},head:[['Date','Time','Actual','Instructor','Result','Student signature','Instructor signature']],body:reports.map(r=>[displayDate(r.lesson_date),`${pdfSafe(r.started_at).slice(0,5)}–${pdfSafe(r.ended_at).slice(0,5)}`,`${r.duration_minutes||'—'} min`,instructorName(r.instructor_id),r.status==='voided'?'VOIDED':r.overall_score==null?'Not recorded':`${r.overall_score}%`,pdfSafe(r.student_signature_name),pdfSafe(r.instructor_signature_name)])});
+      y=doc.lastAutoTable.finalY+16;doc.setFontSize(11);doc.text('Lesson notes and test results',margin,y);
+      doc.autoTable({startY:y+7,theme:'striped',styles:{fontSize:7,cellPadding:4,overflow:'linebreak'},headStyles:{fillColor:navy,textColor:255},columnStyles:{0:{cellWidth:58},1:{cellWidth:135},2:{cellWidth:150},3:{cellWidth:175}},head:[['Date','Scores','Instructor notes','Next focus']],body:reports.map(r=>[displayDate(r.lesson_date),`Overall ${pdfSafe(r.overall_score)} | Obs ${pdfSafe(r.observation_score)} | Int ${pdfSafe(r.intersections_score)} | Lane ${pdfSafe(r.lane_control_score)} | Park ${pdfSafe(r.parking_score)} | Defensive ${pdfSafe(r.defensive_driving_score)}`,pdfSafe(r.lesson_notes),pdfSafe(r.next_focus)])});
+      const missing=requiredMissing();if(missing.length){y=doc.lastAutoTable.finalY+16;if(y>690){doc.addPage();y=50}doc.setTextColor(150,40,40);doc.setFontSize(10);doc.text(`INCOMPLETE RECORD — ${missing.length} required item(s) missing`,margin,y);doc.setTextColor(50);doc.setFontSize(8);doc.text(doc.splitTextToSize(missing.join(' • '),pageWidth-margin*2),margin,y+14)}
+      addFooter();doc.setProperties({title:`Student Training Record - ${student.full_name}`,subject:'Operational driving school training record',author:'Summit Driver Academy'});doc.save(`Summit-Student-Record-${student.full_name.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')}.pdf`);
+    }catch(error){console.error(error);$('#recordCompleteness').textContent=tr('downloadFailed')}
+  }
+  window.addEventListener('summit:portal-ready',()=>{$('#recordsPanel').classList.remove('hidden');student=portal().selected;translate();loadRecords()});
+  window.addEventListener('summit:student-selected',e=>{if(!portal().profile||!['owner','manager'].includes(portal().profile.role))return;student=e.detail.student;$('#recordsPanel').classList.remove('hidden');loadRecords()});
+  window.addEventListener('summit:records-changed',loadRecords);
+  new MutationObserver(translate).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  $('#editStudentRecordButton').addEventListener('click',()=>{const form=$('#studentRecordForm');$('#studentRecordName').textContent=student.full_name;fillForm(form,student,['date_of_birth','gender','address','driver_licence_number','course_start_date','course_completion_date','ministry_certificate_number','ministry_acknowledged_at']);open('studentRecordForm')});
+  $('#downloadRecordButton').addEventListener('click',downloadPdf);
+  $('#lessonRecordList').addEventListener('click',e=>{const button=e.target.closest('.edit-record');if(!button)return;const record=reports.find(r=>r.id===button.dataset.report),form=$('#editLessonRecordForm');fillForm(form,record,['id','lesson_date','started_at','ended_at','duration_minutes','overall_score','status','lesson_notes','next_focus','student_signature_name','instructor_signature_name']);open('editLessonRecordForm')});
+  $('#studentRecordForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget,payload=Object.fromEntries(new FormData(form).entries());Object.keys(payload).forEach(k=>{if(payload[k]==='')payload[k]=null});if(payload.ministry_acknowledged_at)payload.ministry_acknowledged_at=new Date(`${payload.ministry_acknowledged_at}T12:00:00`).toISOString();const {data,error}=await portal().client.from('students').update(payload).eq('id',student.id).select().single();if(error){form.querySelector('.message').textContent=error.message;return}student=data;portal().setStudents(portal().students.map(s=>s.id===data.id?data:s));close();render();$('#portalMessage').textContent=tr('saved')});
+  $('#editLessonRecordForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget,payload=Object.fromEntries(new FormData(form).entries()),id=payload.id;delete payload.id;['duration_minutes','overall_score'].forEach(k=>payload[k]=payload[k]===''?null:Number(payload[k]));['started_at','ended_at','lesson_notes','next_focus','student_signature_name','instructor_signature_name'].forEach(k=>{if(payload[k]==='')payload[k]=null});const original=reports.find(r=>r.id===id);if(payload.student_signature_name&&!original.student_signed_at)payload.student_signed_at=new Date().toISOString();if(payload.instructor_signature_name&&!original.instructor_signed_at)payload.instructor_signed_at=new Date().toISOString();const {error}=await portal().client.from('lesson_reports').update(payload).eq('id',id);if(error){form.querySelector('.message').textContent=error.message;return}close();await loadRecords();$('#portalMessage').textContent=tr('corrected')});
+})();

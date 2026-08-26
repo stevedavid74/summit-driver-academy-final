@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Instructor Portal | Summit Driver Academy</title>
   <link rel="stylesheet" href="portal.css">
-  <link rel="stylesheet" href="portal-calendar.css">
+  <link rel="stylesheet" href="portal-calendar.css?v=20260826-calendar-view">
   <link rel="stylesheet" href="parent-sharing.css">
 </head>
 <body>
@@ -64,6 +64,12 @@
         <article><strong id="upcomingCount">0</strong><span data-i18n="upcomingLessons">Upcoming lessons</span></article>
         <article><strong id="activeCount">0</strong><span data-i18n="activeStudents">Active students</span></article>
       </div>
+
+      <section class="panel calendar-panel">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="lessonCalendar">Lesson calendar</p><h2 data-i18n="upcomingSchedule">Upcoming schedule</h2></div><span id="calendarCount" class="role-badge">0</span></div>
+        <div id="calendarList" class="calendar-list"></div>
+        <p id="emptyCalendar" class="empty" data-i18n="noUpcomingLessons">No upcoming lessons are scheduled.</p>
+      </section>
 
       <section id="registrationPanel" class="panel registration-panel hidden">
         <div class="section-heading"><div><p class="eyebrow" data-i18n="weekRequests">Week requests</p><h2 data-i18n="preferredTrainingWeeks">Preferred training weeks</h2></div><span id="registrationCount" class="role-badge">0</span></div>
@@ -162,6 +168,6 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260826-lesson-scheduling"></script>
+  <script src="portal.js?v=20260826-calendar-view"></script>
 </body>
 </html>

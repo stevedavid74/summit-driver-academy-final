@@ -3,6 +3,36 @@
   padding: 24px;
 }
 
+.calendar-panel {
+  margin-bottom: 20px;
+  padding: 24px;
+}
+
+.calendar-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.calendar-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(145px,.55fr) 1.3fr 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 14px;
+  text-align: left;
+  background: rgba(0,0,0,.18);
+}
+
+.calendar-date,
+.calendar-student,
+.calendar-instructor { display: grid; }
+.calendar-date strong { color: var(--gold2); }
+.calendar-row small { color: var(--muted); font-weight: 500; }
+.calendar-instructor { text-align: right; }
+
 .registration-list {
   display: grid;
   gap: 10px;
@@ -50,6 +80,8 @@
 .registration-row.is-confirmed .registration-actions { grid-template-columns: 1fr; }
 
 @media (max-width: 800px) {
+  .calendar-row { grid-template-columns: 1fr; gap: 8px; }
+  .calendar-instructor { text-align: left; }
   .registration-row,
   .registration-actions {
     grid-template-columns: 1fr;

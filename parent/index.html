@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Family Progress Portal | Summit Driver Academy</title>
+  <link rel="icon" href="../assets/summit-logo.png">
+  <link rel="stylesheet" href="parent.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../"><img src="../assets/summit-logo-legible-gold.png" alt="Summit Driver Academy"><span>Summit Driver Academy<small data-i18n="portalName">Family Progress Portal</small></span></a>
+    <div class="actions"><button id="languageToggle" type="button">FR</button><button id="signOutButton" class="hidden" type="button" data-i18n="signOut">Sign out</button></div>
+  </header>
+
+  <main>
+    <section id="loginView" class="login-shell">
+      <div><p class="eyebrow" data-i18n="privateAccess">Private family access</p><h1 data-i18n="welcome">Your student’s progress, clearly communicated.</h1><p class="intro" data-i18n="loginIntro">Sign in with the secure account invitation provided by Summit Driver Academy.</p></div>
+      <form id="loginForm" class="panel login-card">
+        <label><span data-i18n="email">Email</span><input id="email" type="email" autocomplete="username" required></label>
+        <label><span data-i18n="password">Password</span><input id="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary" type="submit" data-i18n="signIn">Sign in securely</button><p id="loginMessage" class="message" role="status"></p>
+      </form>
+    </section>
+
+    <section id="passwordSetupView" class="login-shell hidden">
+      <div><p class="eyebrow" data-i18n="secureSetup">Secure account setup</p><h1 data-i18n="createPassword">Create your family portal password.</h1><p class="intro" data-i18n="setupIntro">Choose a unique password. Do not reuse your email password.</p></div>
+      <form id="passwordSetupForm" class="panel login-card">
+        <label><span data-i18n="newPassword">New password</span><input id="newPassword" type="password" minlength="12" required></label>
+        <label><span data-i18n="confirmPassword">Confirm password</span><input id="confirmPassword" type="password" minlength="12" required></label>
+        <button class="primary" type="submit" data-i18n="savePassword">Save password and enter portal</button><p id="passwordSetupMessage" class="message" role="status"></p>
+      </form>
+    </section>
+
+    <section id="portalView" class="hidden">
+      <div class="welcome"><div><p class="eyebrow" data-i18n="dashboard">Family dashboard</p><h1 id="guardianGreeting"></h1></div><span class="badge" data-i18n="protected">Protected account</span></div>
+      <div id="studentTabs" class="student-tabs"></div>
+      <article id="studentView" class="panel student-view hidden">
+        <div class="student-header"><div><p class="eyebrow" data-i18n="studentProgress">Student progress</p><h2 id="studentName"></h2></div><span id="studentStatus" class="badge"></span></div>
+        <div class="progress-grid">
+          <label><span data-i18n="onlineTraining">Online training</span><progress id="onlineProgress" max="30"></progress><b id="onlineValue"></b></label>
+          <label><span data-i18n="inCarTraining">In-car training</span><progress id="carProgress" max="10"></progress><b id="carValue"></b></label>
+          <label><span data-i18n="summitScore">Summit score</span><progress id="scoreProgress" max="100"></progress><b id="scoreValue"></b></label>
+        </div>
+        <dl class="student-meta"><div><dt data-i18n="currentFocus">Current focus</dt><dd id="currentFocus"></dd></div><div><dt data-i18n="nextLesson">Next lesson</dt><dd id="nextLesson"></dd></div><div><dt data-i18n="trainingWeek">Training week</dt><dd id="trainingWeek"></dd></div><div><dt data-i18n="roadTestReadiness">Road-test readiness</dt><dd id="roadTestReadiness"></dd></div></dl>
+        <div class="reports-heading"><div><p class="eyebrow" data-i18n="sharedReports">Shared lesson reports</p><h2 data-i18n="recentProgress">Recent progress</h2></div></div>
+        <div id="reportList" class="report-list"></div><p id="emptyReports" class="empty" data-i18n="noReports">No lesson summaries have been shared yet.</p>
+      </article>
+      <p id="emptyStudents" class="panel empty hidden" data-i18n="noStudents">No student has been connected to this family account yet.</p>
+      <p id="portalMessage" class="message" role="status"></p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.js" crossorigin="anonymous"></script>
+  <script src="../portal/portal-config.js"></script>
+  <script src="parent.js"></script>
+</body>
+</html>

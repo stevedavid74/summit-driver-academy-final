@@ -8,6 +8,7 @@
   <title>Instructor Portal | Summit Driver Academy</title>
   <link rel="stylesheet" href="portal.css">
   <link rel="stylesheet" href="portal-calendar.css?v=20260826-calendar-view">
+  <link rel="stylesheet" href="portal-scheduling.css?v=20260826-reschedule-cancel">
   <link rel="stylesheet" href="parent-sharing.css">
 </head>
 <body>
@@ -122,7 +123,7 @@
           <label><span data-i18n="lessonDateTime">Lesson date and time</span><input name="next_lesson_at" type="datetime-local" required></label>
           <label><span data-i18n="scheduledDuration">Lesson duration (minutes)</span><input name="scheduled_duration_minutes" type="number" min="15" max="480" step="15" value="120" required></label>
         </div>
-        <button class="primary" type="submit" data-i18n="saveSchedule">Save schedule</button><p class="message" role="status"></p>
+        <div class="form-actions"><button class="primary" type="submit" data-i18n="saveSchedule">Save schedule</button><button id="cancelLessonButton" class="danger hidden" type="button" data-i18n="cancelLesson">Cancel lesson</button></div><p class="message" role="status"></p>
       </form>
 
       <form id="reportForm" class="panel modal-card hidden">
@@ -169,6 +170,6 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260826-daily-capacity"></script>
+  <script src="portal.js?v=20260826-reschedule-cancel"></script>
 </body>
 </html>

@@ -119,7 +119,8 @@
         <div class="section-heading"><div><p class="eyebrow" data-i18n="lessonSchedule">Lesson schedule</p><h2 id="scheduleStudentName"></h2></div><button class="icon-button" data-close="scheduleForm" type="button" aria-label="Close">×</button></div>
         <p data-i18n="scheduleIntro">Choose the student's next lesson date and time.</p>
         <div class="form-grid">
-          <label class="wide"><span data-i18n="lessonDateTime">Lesson date and time</span><input name="next_lesson_at" type="datetime-local" required></label>
+          <label><span data-i18n="lessonDateTime">Lesson date and time</span><input name="next_lesson_at" type="datetime-local" required></label>
+          <label><span data-i18n="scheduledDuration">Lesson duration (minutes)</span><input name="scheduled_duration_minutes" type="number" min="15" max="480" step="15" value="120" required></label>
         </div>
         <button class="primary" type="submit" data-i18n="saveSchedule">Save schedule</button><p class="message" role="status"></p>
       </form>
@@ -168,6 +169,6 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260826-calendar-view"></script>
+  <script src="portal.js?v=20260826-conflict-protection"></script>
 </body>
 </html>

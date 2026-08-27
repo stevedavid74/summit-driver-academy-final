@@ -272,6 +272,35 @@
         </div>
         <button id="saveTheoryButton" class="primary" type="submit">Save training session</button><p class="message" role="status"></p>
       </form>
+      <form id="onboardingForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-onboard="kicker">Student enrollment</p><h2 id="onboardingTitle">Complete enrollment</h2></div><button class="icon-button" data-close="onboardingForm" type="button" aria-label="Close">×</button></div>
+        <input name="registration_id" type="hidden">
+        <p class="records-note" data-onboard="intro">Enter the student's legal information and record the signed enrollment consent.</p>
+        <div class="form-grid">
+          <label class="wide"><span data-onboard="legalName">Student legal name</span><input name="legal_name" required autocomplete="name"></label>
+          <label><span data-onboard="studentEmail">Student email</span><input name="student_email" type="email" required autocomplete="email"></label>
+          <label><span data-onboard="studentPhone">Student phone</span><input name="student_phone" type="tel" required autocomplete="tel"></label>
+          <label><span data-onboard="language">Preferred language</span><select name="preferred_language"><option value="en">English</option><option value="fr">Français</option></select></label>
+          <label><span data-onboard="birthDate">Date of birth</span><input name="date_of_birth" type="date" required></label>
+          <label><span data-onboard="gender">Gender</span><input name="gender"></label>
+          <label class="wide"><span data-onboard="address">Home address</span><textarea name="address" rows="2" required></textarea></label>
+          <label><span data-onboard="licence">Driver's licence number</span><input name="driver_licence_number" required autocomplete="off"></label>
+          <label><span data-onboard="courseStart">Course start date</span><input name="course_start_date" type="date" required></label>
+          <label><span data-onboard="emergencyName">Emergency contact name</span><input name="emergency_contact_name" required></label>
+          <label><span data-onboard="relationship">Relationship</span><input name="emergency_contact_relationship"></label>
+          <label><span data-onboard="emergencyPhone">Emergency contact phone</span><input name="emergency_contact_phone" type="tel" required></label>
+          <label><span data-onboard="signerName">Consent signer name</span><input name="signer_name" required autocomplete="off"></label>
+          <label><span data-onboard="signerRelationship">Signer relationship</span><select name="signer_relationship"><option value="student">Student</option><option value="parent_guardian">Parent / guardian</option></select></label>
+          <label class="wide share-control"><input name="enrollment_consent" type="checkbox" required><span data-onboard="enrollmentConsent">The signer consents to enrollment in the Summit program and confirms the information is accurate.</span></label>
+          <label class="wide share-control"><input name="privacy_consent" type="checkbox" required><span data-onboard="privacyConsent">The signer acknowledges Summit's privacy and student-record practices.</span></label>
+          <label class="wide share-control"><input name="electronic_records_consent" type="checkbox" required><span data-onboard="electronicConsent">The signer consents to electronic training records, signatures, and communications.</span></label>
+          <label class="wide share-control"><input name="signer_attested" type="checkbox" required><span data-onboard="attestation">The signer entered their name and confirmed these consents in the presence of Summit staff.</span></label>
+          <label class="wide share-control"><input name="invite_parent" type="checkbox"><span data-onboard="inviteParent">Send a secure family-portal invitation after enrollment</span></label>
+          <label><span data-onboard="parentName">Parent or guardian name</span><input name="parent_name"></label>
+          <label><span data-onboard="parentEmail">Parent or guardian email</span><input name="parent_email" type="email"></label>
+        </div>
+        <button class="primary" type="submit" data-onboard="save">Complete student enrollment</button><p class="message" role="status"></p>
+      </form>
       <form id="changePasswordForm" class="panel modal-card hidden">
         <div class="section-heading"><div><p class="eyebrow" data-i18n="accountSecurity">Account security</p><h2 data-i18n="changePassword">Change password</h2></div><button class="icon-button" data-close="changePasswordForm" type="button" aria-label="Close">×</button></div>
         <p data-i18n="changePasswordIntro">Choose a unique password for the Summit portal. Do not reuse your email password.</p>
@@ -293,5 +322,6 @@
   <script src="staff-records.js?v=20260827-staff-licences"></script>
   <script src="records.js?v=20260827-theory-records"></script>
   <script src="theory-records.js?v=20260827-theory-corrections"></script>
+  <script src="onboarding.js?v=20260827-student-onboarding"></script>
 </body>
 </html>

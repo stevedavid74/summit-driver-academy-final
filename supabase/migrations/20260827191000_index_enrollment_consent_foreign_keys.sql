@@ -1,0 +1,2 @@
+create index student_enrollment_consents_registration_idx on public.student_enrollment_consents(registration_id) where registration_id is not null;
+create index student_enrollment_consents_recorded_by_idx on public.student_enrollment_consents(recorded_by);

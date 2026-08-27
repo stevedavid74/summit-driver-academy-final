@@ -118,10 +118,12 @@
           <div class="records-actions">
             <button id="editStudentRecordButton" class="small" type="button" data-i18n="editStudentRecord">Edit student details</button>
             <button id="downloadRecordButton" class="primary" type="button" data-i18n="downloadPdf">Download PDF</button>
+            <button id="completeProgramButton" class="small" type="button" data-i18n="completeProgram">Complete student program</button>
           </div>
         </div>
         <p class="records-note" data-i18n="recordsNote">Owner and manager record. Keep the source records for at least three years.</p>
         <div id="recordCompleteness" class="completeness" role="status"></div>
+        <div id="completionStatus" class="completion-status hidden" role="status"></div>
         <div id="lessonRecordList" class="lesson-record-list"></div>
         <p id="emptyLessonRecords" class="empty" data-i18n="noLessonRecords">No lesson records have been created for this student.</p>
         <details class="audit-details"><summary data-i18n="auditHistory">Revision history</summary><div id="auditList" class="audit-list"></div></details>
@@ -260,6 +262,6 @@
   <script src="portal-config.js"></script>
   <script src="portal.js?v=20260827-student-records"></script>
   <script src="staff-records.js?v=20260827-staff-licences"></script>
-  <script src="records.js?v=20260827-time-display"></script>
+  <script src="records.js?v=20260827-program-completion"></script>
 </body>
 </html>

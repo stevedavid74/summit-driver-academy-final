@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="portal-scheduling.css?v=20260826-reschedule-cancel">
   <link rel="stylesheet" href="parent-sharing.css">
   <link rel="stylesheet" href="records.css?v=20260826-mto-records">
+  <link rel="stylesheet" href="staff-records.css?v=20260827-staff-licences">
 </head>
 <body>
   <header class="topbar">
@@ -77,6 +78,12 @@
         <div class="section-heading"><div><p class="eyebrow" data-i18n="weekRequests">Week requests</p><h2 data-i18n="preferredTrainingWeeks">Preferred training weeks</h2></div><span id="registrationCount" class="role-badge">0</span></div>
         <div id="registrationList" class="registration-list"></div>
         <p id="emptyRegistrations" class="empty" data-i18n="noWeekRequests">No preferred weeks have been requested yet.</p>
+      </section>
+
+      <section id="staffCompliancePanel" class="panel staff-compliance-panel hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="staffCompliance">Staff compliance</p><h2 data-i18n="instructorLicenceRecords">Instructor licence records</h2></div><span id="staffComplianceCount" class="role-badge">0</span></div>
+        <p class="records-note" data-i18n="staffComplianceIntro">Maintain current licence information for every staff member who provides instruction.</p>
+        <div id="staffComplianceList" class="staff-compliance-list"></div>
       </section>
 
       <div class="portal-grid">
@@ -183,6 +190,20 @@
         <button class="primary" type="submit" data-i18n="saveStudentRecord">Save student record</button><p class="message" role="status"></p>
       </form>
 
+      <form id="staffLicenceForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="staffCompliance">Staff compliance</p><h2 id="staffLicenceName"></h2></div><button class="icon-button" data-close="staffLicenceForm" type="button" aria-label="Close">×</button></div>
+        <input name="user_id" type="hidden">
+        <p data-i18n="staffLicenceIntro">Enter the information exactly as it appears on the staff member's current licences.</p>
+        <div class="form-grid">
+          <label class="wide share-control"><input name="provides_instruction" type="checkbox"><span data-i18n="providesInstruction">This staff member provides driving instruction</span></label>
+          <label><span data-i18n="staffDriverLicence">Driver's licence number</span><input name="driver_licence_number" autocomplete="off"></label>
+          <label><span data-i18n="staffDriverExpiry">Driver's licence expiry</span><input name="driver_licence_expiry" type="date"></label>
+          <label><span data-i18n="instructorLicence">Driving instructor licence number</span><input name="instructor_licence_number" autocomplete="off"></label>
+          <label><span data-i18n="instructorLicenceExpiry">Instructor licence expiry</span><input name="instructor_licence_expiry" type="date"></label>
+        </div>
+        <button class="primary" type="submit" data-i18n="saveLicenceRecord">Save licence record</button><p class="message" role="status"></p>
+      </form>
+
       <form id="editLessonRecordForm" class="panel modal-card hidden">
         <div class="section-heading"><div><p class="eyebrow" data-i18n="schoolRecords">School records</p><h2 data-i18n="correctLessonRecord">Correct lesson record</h2></div><button class="icon-button" data-close="editLessonRecordForm" type="button" aria-label="Close">×</button></div>
         <input name="id" type="hidden">
@@ -230,7 +251,8 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260827-signatures"></script>
+  <script src="portal.js?v=20260827-staff-licences"></script>
+  <script src="staff-records.js?v=20260827-staff-licences"></script>
   <script src="records.js?v=20260827-signatures"></script>
 </body>
 </html>

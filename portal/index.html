@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="records.css?v=20260826-mto-records">
   <link rel="stylesheet" href="staff-records.css?v=20260827-staff-licences">
   <link rel="stylesheet" href="theory-records.css?v=20260827-theory-records">
+  <link rel="stylesheet" href="payments.css?v=20260827-sandbox-payments">
 </head>
 <body>
   <header class="topbar">
@@ -34,6 +35,21 @@
         <h1 data-i18n="welcome">Welcome to the Summit instructor portal.</h1>
         <p data-i18n="loginIntro">Sign in to view assigned students, record lessons, and update progress.</p>
       </div>
+
+      <section id="paymentsPanel" class="panel payments-panel hidden">
+        <div class="section-heading">
+          <div><p class="eyebrow">Sandbox payments</p><h2>Tuition checkout &amp; receipts</h2></div>
+          <span class="payment-environment">TEST ONLY</span>
+        </div>
+        <div class="payment-lock"><strong>Live payments are locked off.</strong><span>This screen uses Stripe test cards only. No real money can be collected.</span></div>
+        <div class="payment-create">
+          <label><span>Tuition price</span><select id="paymentTier"><option value="founding">Founding 30 — $900.00</option><option value="regular">Regular tuition — $1,200.00</option></select></label>
+          <button id="createCheckoutButton" class="primary" type="button">Create sandbox checkout</button>
+        </div>
+        <p id="paymentMessage" class="message" role="status"></p>
+        <div id="paymentHistory" class="payment-history"></div>
+        <p id="emptyPayments" class="empty">No payment records exist for this student.</p>
+      </section>
       <form id="loginForm" class="panel login-card">
         <label><span data-i18n="email">Email</span><input id="email" type="email" autocomplete="username" required></label>
         <label><span data-i18n="password">Password</span><input id="password" type="password" autocomplete="current-password" minlength="8" required></label>
@@ -323,5 +339,6 @@
   <script src="records.js?v=20260827-theory-records"></script>
   <script src="theory-records.js?v=20260827-theory-corrections"></script>
   <script src="onboarding.js?v=20260827-student-onboarding"></script>
+  <script src="payments.js?v=20260827-sandbox-payments"></script>
 </body>
 </html>

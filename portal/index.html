@@ -254,6 +254,7 @@
       </form>
       <form id="theoryRecordForm" class="panel modal-card hidden">
         <div class="section-heading"><div><p class="eyebrow">Training record</p><h2 id="theoryStudentName">Record theory session</h2></div><button class="icon-button" data-close="theoryRecordForm" type="button" aria-label="Close">×</button></div>
+        <input name="id" type="hidden">
         <div class="form-grid">
           <label><span>Instruction type</span><select name="delivery_type" required><option value="digital">Digital classroom</option><option value="classroom">In-person classroom</option><option value="flexible">Flexible instruction</option></select></label>
           <label><span>Module or topic</span><input name="module_title" required></label>
@@ -269,7 +270,7 @@
           <label class="wide share-control"><input name="instructor_attested" type="checkbox" required><span>I confirm the instruction, attendance, assessment, and quality-assurance details are accurate.</span></label>
           <label class="wide"><span>Notes</span><textarea name="notes" rows="3"></textarea></label>
         </div>
-        <button class="primary" type="submit">Save training session</button><p class="message" role="status"></p>
+        <button id="saveTheoryButton" class="primary" type="submit">Save training session</button><p class="message" role="status"></p>
       </form>
       <form id="changePasswordForm" class="panel modal-card hidden">
         <div class="section-heading"><div><p class="eyebrow" data-i18n="accountSecurity">Account security</p><h2 data-i18n="changePassword">Change password</h2></div><button class="icon-button" data-close="changePasswordForm" type="button" aria-label="Close">×</button></div>
@@ -291,6 +292,6 @@
   <script src="portal.js?v=20260827-theory-records"></script>
   <script src="staff-records.js?v=20260827-staff-licences"></script>
   <script src="records.js?v=20260827-theory-records"></script>
-  <script src="theory-records.js?v=20260827-theory-records"></script>
+  <script src="theory-records.js?v=20260827-theory-corrections"></script>
 </body>
 </html>

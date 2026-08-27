@@ -159,8 +159,10 @@
           <label class="wide"><span data-i18n="nextFocus">Next focus</span><textarea name="next_focus" rows="2"></textarea></label>
           <label class="wide"><span data-i18n="parentSummary">Parent progress summary</span><textarea name="parent_summary" rows="3" placeholder="A clear, constructive summary for the student and family."></textarea></label>
           <label class="wide share-control"><input name="share_with_parent" type="checkbox"><span data-i18n="shareWithParent">Share this lesson summary and scores with the parent dashboard</span></label>
-          <label><span data-i18n="studentSignature">Student signature (typed full name)</span><input name="student_signature_name"></label>
-          <label><span data-i18n="instructorSignature">Instructor signature (typed full name)</span><input name="instructor_signature_name"></label>
+          <label><span data-i18n="studentSignature">Student signature (student types full name)</span><input name="student_signature_name" required autocomplete="off"></label>
+          <label><span data-i18n="instructorSignature">Instructor signature</span><input name="instructor_signature_name" required readonly></label>
+          <label class="wide share-control"><input name="student_signature_attested" type="checkbox" required><span data-i18n="studentSignatureAttestation">The student entered their name after completing this lesson and confirmed this record.</span></label>
+          <label class="wide share-control"><input name="instructor_signature_attested" type="checkbox" required><span data-i18n="instructorSignatureAttestation">I confirm that I provided this lesson and that this record is accurate.</span></label>
         </div>
         <button class="primary" type="submit" data-i18n="saveReport">Save lesson report</button><p class="message" role="status"></p>
       </form>
@@ -193,8 +195,10 @@
           <label><span data-i18n="status">Status</span><select name="status"><option value="draft">Draft</option><option value="completed">Completed</option><option value="voided">Voided</option></select></label>
           <label class="wide"><span data-i18n="lessonNotes">Private instructor notes (staff only)</span><textarea name="lesson_notes" rows="3"></textarea></label>
           <label class="wide"><span data-i18n="nextFocus">Next focus</span><textarea name="next_focus" rows="2"></textarea></label>
-          <label><span data-i18n="studentSignature">Student signature (typed full name)</span><input name="student_signature_name"></label>
-          <label><span data-i18n="instructorSignature">Instructor signature (typed full name)</span><input name="instructor_signature_name"></label>
+          <label><span data-i18n="studentSignature">Student signature (student types full name)</span><input name="student_signature_name" required autocomplete="off"></label>
+          <label><span data-i18n="instructorSignature">Instructor signature</span><input name="instructor_signature_name" required readonly></label>
+          <label class="wide share-control"><input name="student_signature_attested" type="checkbox" required><span data-i18n="studentSignatureAttestation">The student entered their name after reviewing this corrected record.</span></label>
+          <label class="wide share-control"><input name="instructor_signature_attested" type="checkbox" required><span data-i18n="instructorSignatureAttestation">I confirm that I provided this lesson and that the corrected record is accurate.</span></label>
         </div>
         <button class="primary" type="submit" data-i18n="saveCorrection">Save correction</button><p class="message" role="status"></p>
       </form>
@@ -226,7 +230,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260826-mto-records"></script>
-  <script src="records.js?v=20260827-pdf-final"></script>
+  <script src="portal.js?v=20260827-signatures"></script>
+  <script src="records.js?v=20260827-signatures"></script>
 </body>
 </html>

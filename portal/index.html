@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="parent-sharing.css">
   <link rel="stylesheet" href="records.css?v=20260826-mto-records">
   <link rel="stylesheet" href="staff-records.css?v=20260827-staff-licences">
+  <link rel="stylesheet" href="theory-records.css?v=20260827-theory-records">
 </head>
 <body>
   <header class="topbar">
@@ -98,7 +99,8 @@
           <div id="studentDetail" class="hidden">
             <div class="section-heading"><div><p class="eyebrow" data-i18n="studentProgress">Student progress</p><h2 id="detailName"></h2></div><span id="detailStatus" class="status"></span></div>
             <div class="progress-grid">
-              <label><span data-i18n="onlineTraining">Online training</span><progress id="onlineProgress" max="30"></progress><b id="onlineValue"></b></label>
+              <label><span>Classroom / digital</span><progress id="classroomProgress" max="20"></progress><b id="classroomValue"></b></label>
+              <label><span>Flexible instruction</span><progress id="flexibleProgress" max="10"></progress><b id="flexibleValue"></b></label>
               <label><span data-i18n="inCarTraining">In-car training</span><progress id="carProgress" max="10"></progress><b id="carValue"></b></label>
               <label><span data-i18n="summitScore">Summit score</span><progress id="scoreProgress" max="100"></progress><b id="scoreValue"></b></label>
             </div>
@@ -111,6 +113,13 @@
           </div>
         </section>
       </div>
+
+      <section id="theoryRecordsPanel" class="panel records-panel hidden">
+        <div class="section-heading records-heading"><div><p class="eyebrow">Theory &amp; flexible instruction</p><h2>Training attendance</h2></div><button id="recordTheoryButton" class="primary" type="button">Record theory session</button></div>
+        <p class="records-note">The totals below are calculated from completed, signed session records.</p>
+        <div class="theory-totals"><div><strong id="theoryClassroomTotal">0/20 hours</strong><span>Classroom / digital</span></div><div><strong id="theoryFlexibleTotal">0/10 hours</strong><span>Flexible instruction</span></div></div>
+        <div id="theoryRecordList" class="lesson-record-list"></div><p id="emptyTheoryRecords" class="empty">No theory sessions have been recorded for this student.</p>
+      </section>
 
       <section id="recordsPanel" class="panel records-panel hidden">
         <div class="section-heading records-heading">
@@ -243,6 +252,25 @@
         </div>
         <button class="primary" type="submit" data-i18n="sendParentInvite">Send secure invitation</button><p class="message" role="status"></p>
       </form>
+      <form id="theoryRecordForm" class="panel modal-card hidden">
+        <div class="section-heading"><div><p class="eyebrow">Training record</p><h2 id="theoryStudentName">Record theory session</h2></div><button class="icon-button" data-close="theoryRecordForm" type="button" aria-label="Close">×</button></div>
+        <div class="form-grid">
+          <label><span>Instruction type</span><select name="delivery_type" required><option value="digital">Digital classroom</option><option value="classroom">In-person classroom</option><option value="flexible">Flexible instruction</option></select></label>
+          <label><span>Module or topic</span><input name="module_title" required></label>
+          <label><span>Date</span><input name="session_date" type="date" required></label>
+          <label><span>Start time</span><input name="started_at" type="time" required></label>
+          <label><span>End time</span><input name="ended_at" type="time" required></label>
+          <label><span>Duration (minutes)</span><input name="duration_minutes" type="number" min="15" max="300" step="15" required readonly></label>
+          <label><span>Assessment result (%)</span><input name="test_score" type="number" min="0" max="100"></label>
+          <label class="wide share-control"><input name="qa_verified" type="checkbox"><span>Required for digital training: quality-assurance measures were completed.</span></label>
+          <label><span>Student signature (student types full name)</span><input name="student_signature_name" required autocomplete="off"></label>
+          <label><span>Instructor signature</span><input name="instructor_signature_name" required readonly></label>
+          <label class="wide share-control"><input name="student_attested" type="checkbox" required><span>The student reviewed this attendance record and entered their name.</span></label>
+          <label class="wide share-control"><input name="instructor_attested" type="checkbox" required><span>I confirm the instruction, attendance, assessment, and quality-assurance details are accurate.</span></label>
+          <label class="wide"><span>Notes</span><textarea name="notes" rows="3"></textarea></label>
+        </div>
+        <button class="primary" type="submit">Save training session</button><p class="message" role="status"></p>
+      </form>
       <form id="changePasswordForm" class="panel modal-card hidden">
         <div class="section-heading"><div><p class="eyebrow" data-i18n="accountSecurity">Account security</p><h2 data-i18n="changePassword">Change password</h2></div><button class="icon-button" data-close="changePasswordForm" type="button" aria-label="Close">×</button></div>
         <p data-i18n="changePasswordIntro">Choose a unique password for the Summit portal. Do not reuse your email password.</p>
@@ -263,5 +291,6 @@
   <script src="portal.js?v=20260827-student-records"></script>
   <script src="staff-records.js?v=20260827-staff-licences"></script>
   <script src="records.js?v=20260827-program-completion"></script>
+  <script src="theory-records.js?v=20260827-theory-records"></script>
 </body>
 </html>

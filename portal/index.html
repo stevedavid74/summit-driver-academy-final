@@ -36,20 +36,6 @@
         <p data-i18n="loginIntro">Sign in to view assigned students, record lessons, and update progress.</p>
       </div>
 
-      <section id="paymentsPanel" class="panel payments-panel hidden">
-        <div class="section-heading">
-          <div><p class="eyebrow">Sandbox payments</p><h2>Tuition checkout &amp; receipts</h2></div>
-          <span class="payment-environment">TEST ONLY</span>
-        </div>
-        <div class="payment-lock"><strong>Live payments are locked off.</strong><span>This screen uses Stripe test cards only. No real money can be collected.</span></div>
-        <div class="payment-create">
-          <label><span>Tuition price</span><select id="paymentTier"><option value="founding">Founding 30 — $900.00</option><option value="regular">Regular tuition — $1,200.00</option></select></label>
-          <button id="createCheckoutButton" class="primary" type="button">Create sandbox checkout</button>
-        </div>
-        <p id="paymentMessage" class="message" role="status"></p>
-        <div id="paymentHistory" class="payment-history"></div>
-        <p id="emptyPayments" class="empty">No payment records exist for this student.</p>
-      </section>
       <form id="loginForm" class="panel login-card">
         <label><span data-i18n="email">Email</span><input id="email" type="email" autocomplete="username" required></label>
         <label><span data-i18n="password">Password</span><input id="password" type="password" autocomplete="current-password" minlength="8" required></label>
@@ -129,6 +115,21 @@
           </div>
         </section>
       </div>
+
+      <section id="paymentsPanel" class="panel payments-panel hidden">
+        <div class="section-heading">
+          <div><p class="eyebrow">Sandbox payments</p><h2>Tuition checkout &amp; receipts</h2></div>
+          <span class="payment-environment">TEST ONLY</span>
+        </div>
+        <div class="payment-lock"><strong>Live payments are locked off.</strong><span>This screen uses Stripe test cards only. No real money can be collected.</span></div>
+        <div class="payment-create">
+          <label><span>Tuition price</span><select id="paymentTier"><option value="founding">Founding 30 — $900.00</option><option value="regular">Regular tuition — $1,200.00</option></select></label>
+          <button id="createCheckoutButton" class="primary" type="button">Create sandbox checkout</button>
+        </div>
+        <p id="paymentMessage" class="message" role="status"></p>
+        <div id="paymentHistory" class="payment-history"></div>
+        <p id="emptyPayments" class="empty">No payment records exist for this student.</p>
+      </section>
 
       <section id="theoryRecordsPanel" class="panel records-panel hidden">
         <div class="section-heading records-heading"><div><p class="eyebrow">Theory &amp; flexible instruction</p><h2>Training attendance</h2></div><button id="recordTheoryButton" class="primary" type="button">Record theory session</button></div>

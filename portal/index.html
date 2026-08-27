@@ -178,10 +178,17 @@
         <div class="section-heading"><div><p class="eyebrow" data-i18n="schoolRecords">School records</p><h2 id="studentRecordName"></h2></div><button class="icon-button" data-close="studentRecordForm" type="button" aria-label="Close">×</button></div>
         <p data-i18n="studentRecordIntro">Complete the information required for the student's retained training file.</p>
         <div class="form-grid">
+          <label class="wide"><span data-i18n="legalName">Legal name</span><input name="full_name" autocomplete="name" required></label>
+          <label><span data-i18n="studentEmail">Student email</span><input name="email" type="email" autocomplete="email"></label>
+          <label><span data-i18n="studentPhone">Student phone</span><input name="phone" type="tel" autocomplete="tel"></label>
           <label><span data-i18n="dateOfBirth">Date of birth</span><input name="date_of_birth" type="date"></label>
           <label><span data-i18n="gender">Gender</span><input name="gender"></label>
           <label class="wide"><span data-i18n="address">Address</span><textarea name="address" rows="2"></textarea></label>
           <label><span data-i18n="driverLicenceNumber">Driver's licence number</span><input name="driver_licence_number" autocomplete="off"></label>
+          <label><span data-i18n="programStatus">Program status</span><select name="status"><option value="pre_registered">Pre-registered</option><option value="active">Active</option><option value="completed">Completed</option><option value="inactive">Inactive</option></select></label>
+          <label><span data-i18n="emergencyName">Emergency contact name</span><input name="emergency_contact_name" autocomplete="off"></label>
+          <label><span data-i18n="emergencyRelationship">Relationship</span><input name="emergency_contact_relationship" autocomplete="off"></label>
+          <label><span data-i18n="emergencyPhone">Emergency contact phone</span><input name="emergency_contact_phone" type="tel" autocomplete="off"></label>
           <label><span data-i18n="courseStartDate">Course start date</span><input name="course_start_date" type="date"></label>
           <label><span data-i18n="courseCompletionDate">Course completion date</span><input name="course_completion_date" type="date"></label>
           <label><span data-i18n="certificateNumber">MTO certificate/reference number</span><input name="ministry_certificate_number"></label>
@@ -251,8 +258,8 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
   <script src="portal-config.js"></script>
-  <script src="portal.js?v=20260827-staff-licences"></script>
+  <script src="portal.js?v=20260827-student-records"></script>
   <script src="staff-records.js?v=20260827-staff-licences"></script>
-  <script src="records.js?v=20260827-signatures"></script>
+  <script src="records.js?v=20260827-student-records"></script>
 </body>
 </html>
